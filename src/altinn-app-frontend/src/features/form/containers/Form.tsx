@@ -1,8 +1,12 @@
 import React from 'react';
+import { Route, Routes } from 'react-router-dom';
 
 import Grid from '@material-ui/core/Grid';
 
-import { useAppSelector } from 'src/common/hooks';
+import {
+  useAppSelector,
+  useFormLayoutHistoryAndMatchInstanceLocation,
+} from 'src/common/hooks';
 import ErrorReport from 'src/components/message/ErrorReport';
 import { SummaryComponent } from 'src/components/summary/SummaryComponent';
 import MessageBanner from 'src/features/form/components/MessageBanner';
@@ -132,7 +136,8 @@ export function Form() {
   }, [layout, hasErrors]);
 
   return (
-    <>
+    <Routes>
+    <Route path={`:pageId`}>
       {hasRequiredFields(layout) && (
         <MessageBanner
           language={language}
@@ -150,6 +155,7 @@ export function Form() {
         )}
         <ErrorReport components={errorReportComponents} />
       </Grid>
-    </>
+    </Route>
+    </Routes>
   );
 }
