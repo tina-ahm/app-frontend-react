@@ -1,3 +1,4 @@
+/*
 import { useCallback, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 
@@ -9,10 +10,10 @@ enum HistoryAction {
   BackOrForward = 'POP',
 }
 
-/**
+/!**
  * @param activePageId the formLayout page id that is currently active in the app
  * @return matchRootUrl: Matches the location pathname of the history root. If not, an empty string.
- */
+ *!/
 export const useFormLayoutHistoryAndMatchInstanceLocation = ({
   activePageId,
 }: {
@@ -115,3 +116,4 @@ function listenForHistoryAction({ history, action }, callBack) {
     }
   });
 }
+*/

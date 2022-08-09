@@ -305,16 +305,21 @@ export function* updateCurrentViewSaga({
 }: PayloadAction<IUpdateCurrentView>): SagaIterator {
   try {
     const state: IRuntimeState = yield select();
-    const viewCacheKey = state.formLayout.uiConfig.currentViewCacheKey;
     const instanceId = state.instanceData.instance?.id;
-    if (!viewCacheKey) {
-      yield put(FormLayoutActions.setCurrentViewCacheKey({ key: instanceId }));
-    }
+    const viewCacheKey = state.formLayout.uiConfig.currentViewCacheKey;
     const currentViewCacheKey = viewCacheKey || instanceId;
-    if (!runValidations) {
+    if (!viewCacheKey) {
+      yield put(
+        FormLayoutActions.setCurrentViewCacheKey({ key: currentViewCacheKey }),
+      );
+    }
+    const cachePage = () => {
       if (!skipPageCaching) {
         localStorage.setItem(currentViewCacheKey, newView);
       }
+    };
+    if (!runValidations) {
+      cachePage();
       yield put(
         FormLayoutActions.updateCurrentViewFulfilled({
           newView,
@@ -362,9 +367,7 @@ export function* updateCurrentViewSaga({
           : validationResult.validations;
       yield put(ValidationActions.updateValidations({ validations }));
       if (state.formLayout.uiConfig.returnToView) {
-        if (!skipPageCaching) {
-          localStorage.setItem(currentViewCacheKey, newView);
-        }
+        cachePage();
         yield put(
           FormLayoutActions.updateCurrentViewFulfilled({
             newView,
@@ -387,9 +390,7 @@ export function* updateCurrentViewSaga({
           }),
         );
       } else {
-        if (!skipPageCaching) {
-          localStorage.setItem(currentViewCacheKey, newView);
-        }
+        cachePage();
         yield put(
           FormLayoutActions.updateCurrentViewFulfilled({
             newView,
