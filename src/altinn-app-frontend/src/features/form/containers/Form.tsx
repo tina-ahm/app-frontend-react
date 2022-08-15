@@ -138,20 +138,24 @@ export function Form() {
   // handle root page
   useEffect(() => {
     if (!pageId) {
+      // at the root of the app ( replace the route to the current view)
       if (currentView) {
         navigate(currentView, { replace: true });
       }
-    }
-    if (pageId !== currentView && hasErrors) {
-      navigate(-1);
+    } else if (hasErrors && pageId !== currentView && hasErrors) {
+      navigate(currentView, {
+        state: { ...viewState, newView: currentView },
+        replace: true,
+      });
     }
   });
-  if (viewState?.newView && viewState.newView !== currentView) {
-    if (currentView !== pageId) {
-      if (!hasErrors) {
-        dispatch(FormLayoutActions.updateCurrentView(viewState));
-      }
-    }
+  if (
+    !hasErrors &&
+    viewState?.newView &&
+    viewState.newView == pageId &&
+    viewState.newView !== currentView
+  ) {
+    dispatch(FormLayoutActions.updateCurrentView(viewState));
   }
   return (
     layout && (
