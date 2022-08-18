@@ -9,7 +9,11 @@ import { LanguageActions } from 'src/shared/resources/language/languageSlice';
 import { ProfileActions } from 'src/shared/resources/profile/profileSlice';
 import { QueueActions } from 'src/shared/resources/queue/queueSlice';
 import { TextResourcesActions } from 'src/shared/resources/textResources/textResourcesSlice';
-import { oldTextResourcesUrl, textResourcesUrl } from 'src/utils/appUrlHelper';
+import {
+  oldTextResourcesUrl,
+  textResourcesUrl,
+  textResourcesUrlV1,
+} from 'src/utils/appUrlHelper';
 import { get } from 'src/utils/networking';
 
 export function* fetchTextResources(): SagaIterator {
@@ -20,7 +24,13 @@ export function* fetchTextResources(): SagaIterator {
       resource = yield call(get, textResourcesUrl(appLanguage));
     } catch (error) {
       if (error.response.status !== 200) {
-        resource = yield call(get, oldTextResourcesUrl);
+        try {
+          resource = yield call(get, textResourcesUrlV1(appLanguage));
+        } catch (errorNested) {
+          if (errorNested.response.status !== 200) {
+            resource = yield call(get, oldTextResourcesUrl);
+          }
+        }
       }
     }
 
