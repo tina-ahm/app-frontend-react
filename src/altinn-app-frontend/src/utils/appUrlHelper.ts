@@ -23,7 +23,7 @@ export function textResourcesUrlV1(language: string) {
   return `${origin}/${org}/${app}/api/v1/texts/${language}`;
 }
 export function textResourcesUrl(language: string) {
-  return `http://localhost:55566/api/v2/texts/${language}`;
+  return `${origin}:55566/api/v2/texts/${language}`;
   // return `${origin}/${org}/${app}/api/v2/texts/${language}`;
 }
 
