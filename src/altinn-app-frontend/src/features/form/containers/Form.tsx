@@ -12,12 +12,13 @@ import { mapGroupComponents } from 'src/features/form/containers/formUtils';
 import { GroupContainer } from 'src/features/form/containers/GroupContainer';
 import { PanelGroupContainer } from 'src/features/form/containers/PanelGroupContainer';
 import { FormLayoutActions } from 'src/features/form/layout/formLayoutSlice';
+import { ReadyForPrint } from 'src/shared/components/ReadyForPrint';
 import {
   extractBottomButtons,
   hasRequiredFields,
   topLevelComponents,
 } from 'src/utils/formLayout';
-import { renderGenericComponent as RenderGenericComponent } from 'src/utils/layout';
+import { renderGenericComponent } from 'src/utils/layout';
 import {
   getFormHasErrors,
   missingFieldsInLayoutValidations,
@@ -47,13 +48,17 @@ export function renderLayoutComponent(
     }
     default: {
       return (
-        <RenderGenericComponent
+        <GenericComponent
           key={layoutComponent.id}
           {...layoutComponent}
         />
       );
     }
   }
+}
+
+function GenericComponent(component: ILayoutComponent, layout: ILayout) {
+  return renderGenericComponent(component, layout);
 }
 
 function RenderLayoutGroup(
@@ -157,27 +162,29 @@ export function Form() {
   ) {
     dispatch(FormLayoutActions.updateCurrentView(viewState));
   }
+  if (!layout) {
+    return <div>404</div>;
+  }
   return (
-    layout && (
-      <>
-        {hasRequiredFields(layout) && (
-          <MessageBanner
-            language={language}
-            error={requiredFieldsMissing}
-            messageKey={'form_filler.required_description'}
-          />
+    <>
+      {hasRequiredFields(layout) && (
+        <MessageBanner
+          language={language}
+          error={requiredFieldsMissing}
+          messageKey={'form_filler.required_description'}
+        />
+      )}
+      <Grid
+        container={true}
+        spacing={3}
+        alignItems='flex-start'
+      >
+        {mainComponents.map((component) =>
+          renderLayoutComponent(component, layout),
         )}
-        <Grid
-          container={true}
-          spacing={3}
-          alignItems='flex-start'
-        >
-          {mainComponents.map((component) =>
-            renderLayoutComponent(component, layout),
-          )}
-          <ErrorReport components={errorReportComponents} />
-        </Grid>
-      </>
-    )
+        <ErrorReport components={errorReportComponents} />
+      </Grid>
+      <ReadyForPrint />
+    </>
   );
 }

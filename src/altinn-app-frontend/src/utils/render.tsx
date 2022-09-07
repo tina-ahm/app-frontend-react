@@ -1,15 +1,14 @@
 import * as React from 'react';
 
-import { MessageComponent } from 'src/components/message/MessageComponent';
-import { SoftValidations } from 'src/features/form/components/SoftValidations';
+import { ErrorMessage } from '@altinn/altinn-design-system';
 
-const messageComponentStyle = {
-  display: 'block',
-  width: 'fit-content',
-};
+import { SoftValidations } from 'src/features/form/components/SoftValidations';
+import type { IComponentBindingValidation } from 'src/types';
+
+import { getParsedLanguageFromText } from 'altinn-shared/utils';
 
 export function renderValidationMessagesForComponent(
-  validationMessages: any,
+  validationMessages: IComponentBindingValidation,
   id: string,
 ): JSX.Element[] {
   if (!validationMessages) {
@@ -58,7 +57,7 @@ export function renderValidationMessagesForComponent(
 }
 
 export function renderValidationMessages(
-  messages: React.ReactNode[],
+  messages: string[],
   id: string,
   variant: 'error' | 'warning' | 'info' | 'success',
 ) {
@@ -71,24 +70,19 @@ export function renderValidationMessages(
   }
 
   return (
-    <MessageComponent
-      messageType='error'
-      style={messageComponentStyle}
-      key='error'
-      id={id}
-    >
-      <ol>{messages.map(validationMessagesToList)}</ol>
-    </MessageComponent>
+    <div style={{ paddingTop: '0.375rem' }}>
+      <ErrorMessage id={id}>
+        <ol>{messages.map(validationMessagesToList)}</ol>
+      </ErrorMessage>
+    </div>
   );
 }
 
-const validationMessagesToList = (message: React.ReactNode, index: number) => {
-  return (
-    <li
-      role='alert'
-      key={`validationMessage-${index}`}
-    >
-      {message}
-    </li>
-  );
-};
+const validationMessagesToList = (message: string, index: number) => (
+  <li
+    role='alert'
+    key={`validationMessage-${index}`}
+  >
+    {getParsedLanguageFromText(message)}
+  </li>
+);
