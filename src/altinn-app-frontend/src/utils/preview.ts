@@ -4,14 +4,17 @@ let requestId = 0;
 const listeners:any = {};
 
 window.addEventListener('message', (msg) => {
-  console.log('Got reply back from index.html', msg);
-
-  // TODO: Trigger listener
+  const data = msg.data;
+  if (data.type === 'response') {
+    console.log('Got reply back from index.html', data);
+    listeners[data.id](data);
+  }
 });
 
 export async function previewRequest(method, url, options?: AxiosRequestConfig, data?: any): Promise<any> {
   const id = requestId++;
   window.top?.postMessage({
+    type: 'request',
     id,
     method,
     url,
