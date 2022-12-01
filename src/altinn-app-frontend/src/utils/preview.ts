@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 
 let requestId = 0;
 const listeners:any = {};
@@ -11,7 +11,7 @@ window.addEventListener('message', (msg) => {
   }
 });
 
-export async function previewRequest(method, url, options?: AxiosRequestConfig, data?: any): Promise<any> {
+export async function previewRequest(method, url, options?: AxiosRequestConfig, data?: any): Promise<AxiosResponse> {
   const id = requestId++;
   window.top?.postMessage({
     type: 'request',
@@ -28,5 +28,12 @@ export async function previewRequest(method, url, options?: AxiosRequestConfig, 
   });
   listeners[id] = (reply) => innerResolve(reply);
 
-  return ret;
+  return {
+    config: {},
+    data: ret,
+    headers: {},
+    request: {},
+    status: 200,
+    statusText: 'OK',
+  };
 }

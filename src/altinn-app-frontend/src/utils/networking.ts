@@ -8,20 +8,19 @@ export enum HttpStatusCodes {
   Forbidden = 403,
 }
 
+export const isPreview = (window as any)?.isPreview;
+
 export async function get(url: string, options?: AxiosRequestConfig): Promise<any> {
-  const response: AxiosResponse = await axios.get(url, {
+  const _options:AxiosRequestConfig = {
     ...options,
     headers: { Pragma: 'no-cache', ...options?.headers },
-  });
+  };
+  const response: AxiosResponse = isPreview ? await previewRequest('get', url, _options) : await axios.get(url, _options);
   return response.data ? response.data : null;
 }
 
 export async function post(url: string, options?: AxiosRequestConfig, data?: any): Promise<AxiosResponse> {
-  if ((window as any)?.isPreview) {
-    return await previewRequest('post', url, options, data);
-  }
-
-  return await axios.post(url, data, options);
+  return isPreview ? await previewRequest('post', url, options, data) : await axios.post(url, data, options);
 }
 
 export async function put(
@@ -30,7 +29,10 @@ export async function put(
   data: any,
   config?: AxiosRequestConfig,
 ): Promise<AxiosResponse> {
-  const response: AxiosResponse = await axios.put(`${url}/${apiMode}`, data, config);
+  const _url = `${url}/${apiMode}`;
+  const response: AxiosResponse = isPreview
+    ? await previewRequest('put', _url, config, data)
+    : await axios.put(_url, data, config);
   return response.data ? response.data : null;
 }
 
