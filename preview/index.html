@@ -12,13 +12,16 @@
     }
   </style>
 </head>
-<body>
-
-<iframe id="app" src="/app.html" style="width: 60%; height: 100%;"></iframe>
+<body style="margin: 0;">
+<div style="display: flex; flex-direction: row; height: 100%;">
+  <iframe id="app" src="/app.html" style="width: 60%; height: 100%;"></iframe>
+  <textarea id="layoutsets" style="width: 40%; height: 100%"></textarea>
+</div>
 
 <script>
   const app = document.getElementById('app').contentWindow;
   app.isPreview = true;
+  fetch("/layoutsets").then(res => res.text()).then(text => document.getElementById("layoutsets").value = text);
   window.addEventListener('message', (msg) => {
     const data = msg.data;
 
