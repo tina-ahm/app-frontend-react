@@ -2,7 +2,6 @@ import { call, put, select } from 'redux-saga/effects';
 import type { SagaIterator } from 'redux-saga';
 
 import { FormDynamicsActions } from 'src/features/form/dynamics/formDynamicsSlice';
-import { QueueActions } from 'src/shared/resources/queue/queueSlice';
 import { getLayoutSetIdForApplication } from 'src/utils/appMetadata';
 import { getFetchFormDynamicsUrl } from 'src/utils/appUrlHelper';
 import { get } from 'src/utils/networking';
@@ -33,7 +32,15 @@ export function* fetchDynamicsSaga(): SagaIterator {
       }),
     );
   } catch (error) {
-    yield put(FormDynamicsActions.fetchRejected({ error }));
-    yield put(QueueActions.dataTaskQueueError({ error }));
+    yield put(
+      FormDynamicsActions.fetchFulfilled({
+        apis: undefined,
+        ruleConnection: undefined,
+        conditionalRendering: undefined,
+      }),
+    );
+
+    // yield put(FormDynamicsActions.fetchRejected({ error }));
+    // yield put(QueueActions.dataTaskQueueError({ error }));
   }
 }

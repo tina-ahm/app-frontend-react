@@ -1,7 +1,9 @@
 import { put } from 'redux-saga/effects';
+import type { SagaIterator } from 'redux-saga';
 
 import {
   fetchLayoutSetsSaga,
+  testLayout,
   watchFetchFormLayoutSaga,
   watchFetchFormLayoutSettingsSaga,
 } from 'src/features/form/layout/fetch/fetchFormLayoutSagas';
@@ -20,7 +22,7 @@ import {
 import { OptionsActions } from 'src/shared/resources/options/optionsSlice';
 import { replaceTextResourcesSaga } from 'src/shared/resources/textResources/replace/replaceTextResourcesSagas';
 import { createSagaSlice } from 'src/shared/resources/utils/sagaSlice';
-import type { ILayoutComponent, ILayouts } from 'src/features/form/layout';
+import type { ILayouts } from 'src/features/form/layout';
 import type * as LayoutTypes from 'src/features/form/layout/formLayoutTypes';
 import type { MkActionType } from 'src/shared/resources/utils/sagaSlice';
 import type { ILayoutSets, IPagesSettings, IUiConfig } from 'src/types';
@@ -59,7 +61,19 @@ const formLayoutSlice = createSagaSlice((mkAction: MkActionType<ILayoutState>) =
   initialState,
   extraSagas: [watchMapFileUploaderWithTagSaga, watchInitialCalculatePageOrderAndMoveToNextPageSaga],
   actions: {
-    addNewComponent: mkAction<ILayoutComponent>({}),
+    addNewComponent: mkAction<any>({
+      takeLatest: function* (action: any): SagaIterator {
+        const layouts = JSON.parse(JSON.stringify(testLayout));
+        layouts.layout.push(action.payload);
+        yield put(
+          FormLayoutActions.fetchFulfilled({
+            layouts: layouts as ILayouts,
+            navigationConfig: {},
+            hiddenLayoutsExpressions: {},
+          }),
+        );
+      },
+    }),
     fetch: mkAction<void>({
       saga: () => watchFetchFormLayoutSaga,
     }),

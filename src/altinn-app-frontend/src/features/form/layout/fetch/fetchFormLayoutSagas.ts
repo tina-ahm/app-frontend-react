@@ -5,7 +5,6 @@ import components from 'src/components';
 import { preProcessItem, preProcessLayout } from 'src/features/expressions/validation';
 import { FormDataActions } from 'src/features/form/data/formDataSlice';
 import { FormLayoutActions } from 'src/features/form/layout/formLayoutSlice';
-import { QueueActions } from 'src/shared/resources/queue/queueSlice';
 import { getLayoutSetIdForApplication } from 'src/utils/appMetadata';
 import { getLayoutSetsUrl, getLayoutSettingsUrl, getLayoutsUrl } from 'src/utils/appUrlHelper';
 import { get } from 'src/utils/networking';
@@ -18,6 +17,27 @@ import type { IInstance } from 'altinn-shared/types';
 export const layoutSetsSelector = (state: IRuntimeState) => state.formLayout.layoutsets;
 export const instanceSelector = (state: IRuntimeState) => state.instanceData.instance;
 export const applicationMetadataSelector = (state: IRuntimeState) => state.applicationMetadata.applicationMetadata;
+
+export const testLayout = {
+  layout: [
+    {
+      id: '29a7b440-a54a-41bf-98fd-02f913295850',
+      type: 'Input',
+      textResourceBindings: {},
+      dataModelBindings: {},
+      required: true,
+      readOnly: false,
+    },
+    {
+      id: '9c293fa9-9a78-452a-adcf-3c78bafc02ae',
+      type: 'TextArea',
+      textResourceBindings: {},
+      dataModelBindings: {},
+      required: true,
+      readOnly: false,
+    },
+  ],
+};
 
 type ComponentTypeCaseMapping = { [key: string]: ComponentTypes };
 let componentTypeCaseMapping: ComponentTypeCaseMapping | undefined = undefined;
@@ -106,8 +126,22 @@ export function* fetchLayoutSaga(): SagaIterator {
       }),
     );
   } catch (error) {
-    yield put(FormLayoutActions.fetchRejected({ error }));
-    yield put(QueueActions.dataTaskQueueError({ error }));
+    yield put(
+      FormLayoutActions.fetchFulfilled({
+        layouts: testLayout as ILayouts,
+        navigationConfig: {},
+        hiddenLayoutsExpressions: {},
+      }),
+    );
+    yield put(
+      FormLayoutActions.updateCurrentView({
+        newView: 'layout',
+        skipPageCaching: true,
+      }),
+    );
+
+    // yield put(FormLayoutActions.fetchRejected({ error }));
+    // yield put(QueueActions.dataTaskQueueError({ error }));
   }
 }
 

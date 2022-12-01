@@ -2,7 +2,6 @@ import { call, put, select } from 'redux-saga/effects';
 import type { SagaIterator } from 'redux-saga';
 
 import { FormRulesActions } from 'src/features/form/rules/rulesSlice';
-import { QueueActions } from 'src/shared/resources/queue/queueSlice';
 import { getLayoutSetIdForApplication } from 'src/utils/appMetadata';
 import { getRulehandlerUrl } from 'src/utils/appUrlHelper';
 import { get } from 'src/utils/networking';
@@ -34,7 +33,8 @@ export function* fetchRuleModelSaga(): SagaIterator {
 
     yield put(FormRulesActions.fetchFulfilled({ ruleModel: ruleModelFields }));
   } catch (error) {
-    yield put(FormRulesActions.fetchRejected({ error }));
-    yield put(QueueActions.dataTaskQueueError({ error }));
+    yield put(FormRulesActions.fetchFulfilled({ ruleModel: [] }));
+    // yield put(FormRulesActions.fetchRejected({ error }));
+    // yield put(QueueActions.dataTaskQueueError({ error }));
   }
 }
