@@ -9,7 +9,7 @@ const origin = window.location.origin;
 
 export const appPath = isPreview ? `${origin}/preview/${org}/${app}` : `${origin}/${org}/${app}`;
 export const profileApiUrl = `${appPath}/api/v1/profile/user`;
-export const oldTextResourcesUrl = `${origin}/${org}/${app}/api/textresources`;
+export const oldTextResourcesUrl = `${appPath}/api/textresources`;
 export const applicationMetadataApiUrl = `${appPath}/api/v1/applicationmetadata`;
 export const applicationSettingsApiUrl = `${appPath}/api/v1/applicationsettings`;
 export const invalidateCookieUrl = `${appPath}/api/authentication/invalidatecookie`;
@@ -20,7 +20,7 @@ export const refreshJwtTokenUrl = `${appPath}/api/authentication/keepAlive`;
 
 export const updateCookieUrl = (partyId: string) => `${appPath}/api/v1/parties/${partyId}`;
 
-export const textResourcesUrl = (language: string) => `${origin}/${org}/${app}/api/v1/texts/${language}`;
+export const textResourcesUrl = (language: string) => `${appPath}/api/v1/texts/${language}`;
 
 export const fileUploadUrl = (attachmentType: string) =>
   `${appPath}/instances/${altinnWindow.instanceId}/data?dataType=${attachmentType}`;
