@@ -11,10 +11,17 @@
       height: 100%;
     }
   </style>
+  <script>
+    window.addEventListener('message', (msg) => {
+      const app = document.getElementById('app');
+      console.log('Got request from app', msg, app);
+      // TODO: Send reply back
+    });
+  </script>
 </head>
 <body>
 
-<iframe src="/app.html" style="width: 60%; height: 100%;"></iframe>
+<iframe id="app" src="/app.html" style="width: 60%; height: 100%;"></iframe>
 
 </body>
 </html>
