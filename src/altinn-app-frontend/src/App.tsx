@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from 'src/common/hooks';
 import Entrypoint from 'src/features/entrypoint/Entrypoint';
+import { FormLayoutActions } from 'src/features/form/layout/formLayoutSlice';
 import PartySelection from 'src/features/instantiate/containers/PartySelection';
 import UnknownError from 'src/features/instantiate/containers/UnknownError';
 import { makeGetAllowAnonymousSelector } from 'src/selectors/getAllowAnonymous';
@@ -75,6 +76,12 @@ export const App = () => {
 
   React.useEffect(() => {
     dispatch(QueueActions.startInitialAppTaskQueue());
+
+    window.addEventListener('message', (msg) => {
+      if (msg.data.type === 'add-new-component') {
+        dispatch(FormLayoutActions.addNewComponent(msg.data.component));
+      }
+    });
   }, [dispatch]);
 
   if (hasApiErrors) {
