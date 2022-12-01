@@ -1,4 +1,5 @@
 import { mapFormData } from 'src/utils/databindings';
+import { isPreview } from 'src/utils/networking';
 import type { IFormData } from 'src/features/form/data';
 import type { IAltinnWindow, IMapping } from 'src/types';
 
@@ -6,7 +7,7 @@ const altinnWindow = window as Window as IAltinnWindow;
 const { org, app } = altinnWindow;
 const origin = window.location.origin;
 
-export const appPath = `${origin}/${org}/${app}`;
+export const appPath = isPreview ? `${origin}/preview/${org}/${app}` : `${origin}/${org}/${app}`;
 export const profileApiUrl = `${appPath}/api/v1/profile/user`;
 export const oldTextResourcesUrl = `${origin}/${org}/${app}/api/textresources`;
 export const applicationMetadataApiUrl = `${appPath}/api/v1/applicationmetadata`;
