@@ -1,5 +1,6 @@
 import axios from 'axios';
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { previewRequest } from "src/utils/preview";
 
 export enum HttpStatusCodes {
   Ok = 200,
@@ -16,7 +17,9 @@ export async function get(url: string, options?: AxiosRequestConfig): Promise<an
 }
 
 export async function post(url: string, options?: AxiosRequestConfig, data?: any): Promise<AxiosResponse> {
-  return await axios.post(url, data, options);
+  return await previewRequest('post', url, options, data);
+
+  // return await axios.post(url, data, options);
 }
 
 export async function put(
