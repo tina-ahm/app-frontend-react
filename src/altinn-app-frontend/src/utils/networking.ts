@@ -15,12 +15,16 @@ export async function get(url: string, options?: AxiosRequestConfig): Promise<an
     ...options,
     headers: { Pragma: 'no-cache', ...options?.headers },
   };
-  const response: AxiosResponse = isPreview ? await previewRequest('get', url, _options) : await axios.get(url, _options);
+  if (url.includes('get-my-amazing-layout')) {
+    return await previewRequest('get', url, _options);
+  }
+
+  const response: AxiosResponse = await axios.get(url, _options);
   return response.data ? response.data : null;
 }
 
 export async function post(url: string, options?: AxiosRequestConfig, data?: any): Promise<AxiosResponse> {
-  return isPreview ? await previewRequest('post', url, options, data) : await axios.post(url, data, options);
+  return await axios.post(url, data, options);
 }
 
 export async function put(
@@ -30,9 +34,7 @@ export async function put(
   config?: AxiosRequestConfig,
 ): Promise<AxiosResponse> {
   const _url = `${url}/${apiMode}`;
-  const response: AxiosResponse = isPreview
-    ? await previewRequest('put', _url, config, data)
-    : await axios.put(_url, data, config);
+  const response: AxiosResponse = await axios.put(_url, data, config);
   return response.data ? response.data : null;
 }
 
