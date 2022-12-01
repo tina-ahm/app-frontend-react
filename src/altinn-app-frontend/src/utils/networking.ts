@@ -17,9 +17,11 @@ export async function get(url: string, options?: AxiosRequestConfig): Promise<an
 }
 
 export async function post(url: string, options?: AxiosRequestConfig, data?: any): Promise<AxiosResponse> {
-  return await previewRequest('post', url, options, data);
+  if ((window as any)?.isPreview) {
+    return await previewRequest('post', url, options, data);
+  }
 
-  // return await axios.post(url, data, options);
+  return await axios.post(url, data, options);
 }
 
 export async function put(

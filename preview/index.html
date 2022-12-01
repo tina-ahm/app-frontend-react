@@ -11,17 +11,30 @@
       height: 100%;
     }
   </style>
-  <script>
-    window.addEventListener('message', (msg) => {
-      const app = document.getElementById('app');
-      console.log('Got request from app', msg, app);
-      // TODO: Send reply back
-    });
-  </script>
 </head>
 <body>
 
 <iframe id="app" src="/app.html" style="width: 60%; height: 100%;"></iframe>
+
+<script>
+  const app = document.getElementById('app').contentWindow;
+  app.isPreview = true;
+  window.addEventListener('message', (msg) => {
+    const data = msg.data;
+
+    if (data.type === 'request') {
+      console.log('Got request from app', data);
+
+      if (data.url.includes('parties/validateInstantiation')) {
+        app.postMessage({
+          id: data.id,
+          type: 'response',
+          reply: {"valid": true, "message": null, "validParties": null}
+        });
+      }
+    }
+  });
+</script>
 
 </body>
 </html>

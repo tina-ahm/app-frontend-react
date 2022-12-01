@@ -7,7 +7,7 @@ window.addEventListener('message', (msg) => {
   const data = msg.data;
   if (data.type === 'response') {
     console.log('Got reply back from index.html', data);
-    listeners[data.id](data);
+    listeners[data.id](data.reply);
   }
 });
 
