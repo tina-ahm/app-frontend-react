@@ -692,7 +692,16 @@
         }
       ]
     },
+    // 'instances/512345/active': []
   };
+
+  function reply(data, msg) {
+    app.postMessage({
+      id: data.id,
+      type: 'response',
+      reply: msg,
+    });
+  }
 
   window.addEventListener('message', (msg) => {
     const data = msg.data;
@@ -700,30 +709,18 @@
     if (data.type === 'request') {
       for (const urlPart of Object.keys(standardResponses)) {
         if (data.url.includes(urlPart)) {
-          app.postMessage({
-            id: data.id,
-            type: 'response',
-            reply: standardResponses[urlPart],
-          })
+          reply(data, standardResponses[urlPart]);
           return;
         }
       }
 
-      if (data.url.includes('parties/validateInstantiation')) {
-        app.postMessage({
-          id: data.id,
-          type: 'response',
-          reply: {"valid": true, "message": null, "validParties": null}
-        });
+      if (data.url.includes('api/v1/parties/validateInstantiation')) {
+        reply(data, {"valid": true, "message": null, "validParties": null});
         return;
       }
 
       if (data.url.includes('layoutsets')) {
-        app.postMessage({
-          id: data.id,
-          type: 'response',
-          reply: JSON.parse(document.getElementById("layoutsets").value)
-        });
+        reply(data, JSON.parse(document.getElementById("layoutsets").value));
         return;
       }
 

@@ -21,15 +21,13 @@ export async function previewRequest(method, url, options?: AxiosRequestConfig, 
     data,
   });
 
-  let innerResolve:any = undefined;
-  const ret = new Promise((resolve) => {
-    innerResolve = resolve;
+  const response = await new Promise((resolve) => {
+    listeners[id] = (reply) => resolve(reply);
   });
-  listeners[id] = (reply) => innerResolve(reply);
 
   return {
     config: {},
-    data: ret,
+    data: response,
     headers: {},
     request: {},
     status: 200,
