@@ -12,9 +12,44 @@
     }
   </style>
 </head>
-<body>
-
-<iframe id="app" src="/app.html" style="width: 60%; height: 100%;"></iframe>
+<body style="margin: 0;">
+<div style="display: flex; flex-direction: row; height: 100%;">
+  <iframe id="app" src="/app.html" style="width: 60%; height: 100%;"></iframe>
+  <textarea id="layoutsets" style="width: 40%; height: 100%">
+    {
+      "sets": [
+        {
+          "id": "message",
+          "dataType": "message",
+          "tasks": [
+            "Task_1"
+          ]
+        },
+        {
+          "id": "changename",
+          "dataType": "ServiceModel-test",
+          "tasks": [
+            "Task_2"
+          ]
+        },
+        {
+          "id": "group",
+          "dataType": "nested-group",
+          "tasks": [
+            "Task_3"
+          ]
+        },
+        {
+          "id": "likert",
+          "dataType": "likert",
+          "tasks": [
+            "Task_4"
+          ]
+        }
+      ]
+    }
+  </textarea>
+</div>
 
 <script>
   const app = document.getElementById('app').contentWindow;
@@ -657,38 +692,6 @@
         }
       ]
     },
-    'api/layoutsets': {
-      "sets": [
-        {
-          "id": "message",
-          "dataType": "message",
-          "tasks": [
-            "Task_1"
-          ]
-        },
-        {
-          "id": "changename",
-          "dataType": "ServiceModel-test",
-          "tasks": [
-            "Task_2"
-          ]
-        },
-        {
-          "id": "group",
-          "dataType": "nested-group",
-          "tasks": [
-            "Task_3"
-          ]
-        },
-        {
-          "id": "likert",
-          "dataType": "likert",
-          "tasks": [
-            "Task_4"
-          ]
-        }
-      ]
-    }
   };
 
   window.addEventListener('message', (msg) => {
@@ -711,6 +714,15 @@
           id: data.id,
           type: 'response',
           reply: {"valid": true, "message": null, "validParties": null}
+        });
+        return;
+      }
+
+      if (data.url.includes('layoutsets')) {
+        app.postMessage({
+          id: data.id,
+          type: 'response',
+          reply: JSON.parse(document.getElementById("layoutsets").value)
         });
         return;
       }
