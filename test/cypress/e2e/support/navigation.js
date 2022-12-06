@@ -2,9 +2,11 @@ import AppFrontend from '../pageobjects/app-frontend';
 import Common from '../pageobjects/common';
 import * as texts from '../fixtures/texts.json';
 import { Likert } from '../pageobjects/likert';
+import { Datalist } from '../pageobjects/datalist';
 
 const appFrontend = new AppFrontend();
 const mui = new Common();
+const dataListPage = new Datalist();
 
 /**
  * This object contains a valid data model for each of the tasks that can be fast-skipped. To produce one such data
@@ -85,6 +87,10 @@ const completeFormFast = {
     completeFormSlow.likert();
     genericSendIn();
   },
+  datalist: () => {
+    cy.contains(mui.button, texts.next).click();
+    genericSendIn();
+  },
   confirm: () => {
     genericSendIn();
   },
@@ -157,6 +163,16 @@ const completeFormSlow = {
       .select('altinn');
     cy.get(appFrontend.group.rows[0].nestedGroup.rows[0].uploadTagMulti.attachments[0].tagSave).click();
     cy.get(appFrontend.group.rows[0].nestedGroup.rows[0].uploadTagMulti.attachments[0].tagSelector).should('not.exist');
+
+    cy.intercept('GET', '**/options/*').as('getOptions');
+    cy.get('#nested-source-0-0').should('exist').and('be.visible').select('Annet');
+    cy.wait('@getOptions');
+    cy.get('#nested-reference-0-0').should('exist').and('be.visible').select('Test');
+    cy.get(appFrontend.group.editContainer).find(appFrontend.group.next).click();
+    cy.get('#source-0').should('exist').and('be.visible').select('Digitaliseringsdirektoratet');
+    cy.wait(['@getOptions', '@getOptions']);
+    cy.get('#reference-0').should('exist').and('be.visible').select('Sophie Salt');
+
     cy.get(appFrontend.group.saveMainGroup).should('be.visible').click().should('not.exist');
 
     cy.contains(mui.button, texts.next).click();
@@ -168,6 +184,10 @@ const completeFormSlow = {
     const likertPage = new Likert();
     likertPage.selectRequiredRadios();
   },
+  datalist: () => {
+    cy.get(dataListPage.tableBody).contains('Caroline').parent('td').parent('tr').click();
+    cy.contains(mui.button, texts.next).click();
+  },
   confirm: () => {},
 };
 
@@ -176,7 +196,11 @@ const sendInTask = {
   changename: genericSendIn,
   group: genericSendIn,
   likert: genericSendIn,
-  confirm: genericSendIn,
+  datalist: genericSendIn,
+  confirm: () => {
+    cy.get(appFrontend.confirm.sendIn).should('be.visible').click();
+    cy.get(appFrontend.confirm.sendIn).should('not.exist');
+  },
 };
 
 let currentTask = undefined;
