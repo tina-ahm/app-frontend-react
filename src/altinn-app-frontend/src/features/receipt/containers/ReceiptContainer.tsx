@@ -59,6 +59,9 @@ const ReceiptContainer = () => {
   const [instanceMetaObject, setInstanceMetaObject] = useState({});
   const [userLanguage, setUserLanguage] = useState('nb');
 
+  const layouts = useAppSelector((state) => state.formLayout.layouts);
+  console.log(layouts);
+
   const allOrgs = useAppSelector((state) => state.organisationMetaData.allOrgs);
   const applicationMetadata = useAppSelector((state) => state.applicationMetadata.applicationMetadata);
   const instance = useAppSelector((state) => state.instanceData.instance);

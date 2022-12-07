@@ -3,8 +3,8 @@ import type { SagaIterator } from 'redux-saga';
 
 import components from 'src/components';
 import { preProcessItem, preProcessLayout } from 'src/features/expressions/validation';
-import { FormDataActions } from 'src/features/form/data/formDataSlice';
 import { FormLayoutActions } from 'src/features/form/layout/formLayoutSlice';
+import { ApplicationMetadataActions } from 'src/shared/resources/applicationMetadata/applicationMetadataSlice';
 import { QueueActions } from 'src/shared/resources/queue/queueSlice';
 import { getLayoutSetIdForApplication } from 'src/utils/appMetadata';
 import { getLayoutSetsUrl, getLayoutSettingsUrl, getLayoutsUrl } from 'src/utils/appUrlHelper';
@@ -113,11 +113,7 @@ export function* fetchLayoutSaga(): SagaIterator {
 
 export function* watchFetchFormLayoutSaga(): SagaIterator {
   while (true) {
-    yield all([
-      take(FormLayoutActions.fetch),
-      take(FormDataActions.fetchInitial),
-      take(FormDataActions.fetchFulfilled),
-    ]);
+    yield all([take(ApplicationMetadataActions.getFulfilled)]);
     yield call(fetchLayoutSaga);
   }
 }
