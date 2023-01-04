@@ -82,7 +82,7 @@ export interface IComponentRadioOrCheckbox<T extends Extract<ComponentTypes, 'Ra
   layout?: LayoutStyle;
 }
 
-type NumberFormatProps = Exclude<Parameters<typeof TextField>[0]['formatting'], undefined>['number'];
+export type NumberFormatProps = Exclude<Parameters<typeof TextField>[0]['formatting'], undefined>['number'];
 
 export interface IInputFormatting {
   number?: NumberFormatProps;
@@ -125,8 +125,6 @@ interface Map {
 }
 
 export type ComponentTypes = keyof Map;
-type AllComponents = Map[ComponentTypes];
-
 export type ComponentExceptGroup = Exclude<ComponentTypes, 'Group'>;
 export type ComponentExceptGroupAndSummary = Exclude<ComponentExceptGroup, 'Summary'>;
 export type RenderableGenericComponent = ILayoutComponent<ComponentExceptGroupAndSummary>;
@@ -142,10 +140,7 @@ export type ComponentInGroup = RenderableGenericComponent | ILayoutGroup;
  *
  *  const myImageComponent:ILayoutComponent<'Image'> = ...
  */
-export type ILayoutComponent<Type extends ComponentExceptGroup = ComponentExceptGroup> = Extract<
-  AllComponents,
-  { type: Type }
->;
+export type ILayoutComponent<Type extends ComponentExceptGroup = ComponentExceptGroup> = Map[Type];
 
 export type ILayoutComponentOrGroup = ILayoutGroup | ILayoutComponent;
 

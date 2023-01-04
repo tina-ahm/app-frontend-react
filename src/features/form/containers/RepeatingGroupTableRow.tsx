@@ -201,6 +201,8 @@ export function RepeatingGroupTableRow({
 
   const deleteButtonText = getLanguageFromKey('general.delete', language);
 
+  // TODO: This needs testing. We should only show data for the first cell in the table, not the first component
+  // (which might not contain any data - this all depends on which columns are set up to be displayed).
   const firstCellData = getFormDataForComponent(components[0], index);
 
   return (

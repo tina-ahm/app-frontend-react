@@ -1,6 +1,6 @@
 import type { ExprResolved } from 'src/features/expressions/types';
 import type { ILayoutGroup } from 'src/layout/Group/types';
-import type { IDataModelBindings, ILayoutComponent } from 'src/layout/layout';
+import type { ComponentExceptGroup, ComponentTypes, IDataModelBindings, ILayoutComponent } from 'src/layout/layout';
 import type { LayoutNode, LayoutRootNode } from 'src/utils/layout/hierarchy';
 
 export type NodeType =
@@ -9,9 +9,10 @@ export type NodeType =
   // Resolved nodes have their expressions resolved, leaving only the results
   | 'resolved';
 
-export type ComponentOf<NT extends NodeType> = NT extends 'unresolved'
-  ? ILayoutComponent
-  : ExprResolved<ILayoutComponent>;
+export type ComponentOf<
+  NT extends NodeType,
+  CT extends ComponentExceptGroup = ComponentExceptGroup,
+> = NT extends 'unresolved' ? ILayoutComponent<CT> : ExprResolved<ILayoutComponent<CT>>;
 
 export type GroupOf<NT extends NodeType> = NT extends 'unresolved' ? ILayoutGroup : ExprResolved<ILayoutGroup>;
 
@@ -57,8 +58,12 @@ export type HierarchyWithRowsChildren<NT extends NodeType = 'unresolved'> =
   | LayoutGroupHierarchy<NT> // Non-repeating groups
   | RepeatingGroupHierarchy<NT>;
 
+// The 'noinspection' is needed here for IntelliJ not to mark the generic type 'ComponentExceptGroup' as redundant.
+// It is the default, but if we're not being specific here, some typings seem to subtly fall apart in very strange
+// ways. Not sure why, but this looks like a strange and intricate TypeScript bug.
+// noinspection TypeScriptRedundantGenericType
 export type AnyItem<NT extends NodeType = 'unresolved'> =
-  | ComponentOf<NT>
+  | ComponentOf<NT, ComponentExceptGroup>
   | GroupOf<NT>
   | RepeatingGroupLayoutComponent<NT>
   | LayoutGroupHierarchy<NT>
@@ -78,3 +83,5 @@ export type AnyTopLevelItem<NT extends NodeType> = Exclude<AnyItem<NT>, GroupOf<
 export type AnyTopLevelNode<NT extends NodeType> = LayoutNode<NT, AnyTopLevelItem<NT>>;
 
 export type AnyChildNode<NT extends NodeType> = LayoutNode<NT, AnyItem<NT>>;
+
+export type NodeOf<NT extends NodeType, CT extends ComponentTypes> = LayoutNode<NT, ComponentOf<NT, CT>>;
