@@ -13,7 +13,7 @@ import {
   xPaddingSmall,
 } from 'src/features/form/components/FullWidthWrapper';
 import { RepeatingGroupsEditContainer } from 'src/features/form/containers/RepeatingGroupsEditContainer';
-import { RepeatingGroupTableRow } from 'src/features/form/containers/RepeatingGroupTableRow';
+import { getTextAlignment, RepeatingGroupTableRow } from 'src/features/form/containers/RepeatingGroupTableRow';
 import altinnAppTheme from 'src/theme/altinnAppTheme';
 import { getTextResource } from 'src/utils/formComponentUtils';
 import { createRepeatingGroupComponents } from 'src/utils/formLayout';
@@ -22,7 +22,6 @@ import { getLanguageFromKey } from 'src/utils/sharedUtils';
 import { componentHasValidations, repeatingGroupHasValidations } from 'src/utils/validation';
 import type { IFormData } from 'src/features/form/data';
 import type { ILayoutGroup } from 'src/layout/Group/types';
-import type { ILayoutCompInput } from 'src/layout/Input/types';
 import type { ComponentInGroup, ILayout, ILayoutComponent } from 'src/layout/layout';
 import type { IAttachments } from 'src/shared/resources/attachments';
 import type { IOptions, IRepeatingGroups, ITextResource, ITextResourceBindings, IValidations } from 'src/types';
@@ -148,17 +147,6 @@ function getTableTitle(textResourceBindings: ITextResourceBindings) {
     return textResourceBindings.title;
   }
   return '';
-}
-
-function getTextAlignment(component: ILayoutComponent): 'left' | 'center' | 'right' {
-  const formatting = (component as ILayoutCompInput).formatting;
-  if (formatting && formatting.align) {
-    return formatting.align;
-  }
-  if (formatting && formatting.number) {
-    return 'right';
-  }
-  return 'left';
 }
 
 export function RepeatingGroupTable({

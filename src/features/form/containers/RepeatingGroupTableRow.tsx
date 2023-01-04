@@ -13,7 +13,6 @@ import altinnAppTheme from 'src/theme/altinnAppTheme';
 import { getFormDataForComponentInRepeatingGroup, getTextResource } from 'src/utils/formComponentUtils';
 import type { IFormData } from 'src/features/form/data';
 import type { ILayoutGroup } from 'src/layout/Group/types';
-import type { ILayoutCompInput } from 'src/layout/Input/types';
 import type { ComponentExceptGroup, ILayoutComponent } from 'src/layout/layout';
 import type { IAttachments } from 'src/shared/resources/attachments';
 import type { IOptions, IRepeatingGroups, ITextResource, ITextResourceBindings } from 'src/types';
@@ -115,8 +114,11 @@ function getEditButtonText(
     : getLanguageFromKey('general.edit_alt', language);
 }
 
-function getTextAlignment(component: ILayoutComponent): 'left' | 'center' | 'right' {
-  const formatting = (component as ILayoutCompInput).formatting;
+export function getTextAlignment(component: ILayoutComponent): 'left' | 'center' | 'right' {
+  if (component.type !== 'Input') {
+    return 'left';
+  }
+  const formatting = component.formatting;
   if (formatting && formatting.align) {
     return formatting.align;
   }
