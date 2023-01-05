@@ -16,7 +16,7 @@ import { get } from 'src/utils/sharedUtils';
 import { getOptionsUrl } from 'src/utils/urls/appUrlHelper';
 import type { IFormData } from 'src/features/form/data';
 import type { IUpdateFormDataFulfilled } from 'src/features/form/data/formDataTypes';
-import type { ILayouts, ISelectionComponentProps } from 'src/layout/layout';
+import type { ILayouts, ISelectionComponent } from 'src/layout/layout';
 import type {
   IFetchSpecificOptionSaga,
   IOption,
@@ -42,7 +42,7 @@ export function* fetchOptionsSaga(): SagaIterator {
   let count = 0;
   for (const layoutId of Object.keys(layouts)) {
     for (const element of layouts[layoutId] || []) {
-      const { optionsId, mapping, secure } = element as ISelectionComponentProps;
+      const { optionsId, mapping, secure } = element as ISelectionComponent;
 
       // if we have index indicators we get up the lookup keys for existing indexes
       const { keys, keyWithIndexIndicator } =

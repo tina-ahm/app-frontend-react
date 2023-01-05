@@ -169,12 +169,6 @@ export interface ITextResourceBindings {
 
 export type ILayout = ILayoutComponentOrGroup[];
 
-export type ISelectionComponentProps =
-  | ILayoutCompRadioButtons
-  | ILayoutCompCheckboxes
-  | ILayoutCompLikert
-  | ILayoutCompDropdown;
-
 export interface IGrid extends IGridStyling {
   labelGrid?: IGridStyling;
   innerGrid?: IGridStyling;

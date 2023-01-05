@@ -15,7 +15,8 @@ import {
 } from 'src/shared/resources/options/fetch/fetchOptionsSagas';
 import * as networking from 'src/utils/network/sharedNetworking';
 import { selectNotNull } from 'src/utils/sagas';
-import type { ILayouts, ISelectionComponentProps } from 'src/layout/layout';
+import type { ILayoutCompDropdown } from 'src/layout/Dropdown/types';
+import type { ILayouts } from 'src/layout/layout';
 import type { IOptions, IRuntimeState } from 'src/types';
 import type { IInstance } from 'src/types/shared';
 
@@ -100,7 +101,7 @@ describe('fetchOptionsSagas', () => {
             },
             optionsId: 'fylke',
             required: true,
-          } as ISelectionComponentProps,
+          } as ILayoutCompDropdown,
           {
             id: 'fylke-2',
             type: 'Dropdown',
@@ -112,7 +113,7 @@ describe('fetchOptionsSagas', () => {
             },
             optionsId: 'fylke',
             required: true,
-          } as ISelectionComponentProps,
+          } as ILayoutCompDropdown,
           {
             id: 'kommune',
             type: 'Dropdown',
@@ -127,7 +128,7 @@ describe('fetchOptionsSagas', () => {
             mapping: {
               'FlytteFra.Fylke': 'fylke',
             },
-          } as ISelectionComponentProps,
+          } as ILayoutCompDropdown,
         ],
       };
 
@@ -170,7 +171,7 @@ describe('fetchOptionsSagas', () => {
             mapping: {
               'FlytteFra.Fylke': 'fylke',
             },
-          } as ISelectionComponentProps,
+          } as ILayoutCompDropdown,
           {
             id: 'kommune-2',
             type: 'Dropdown',
@@ -185,7 +186,7 @@ describe('fetchOptionsSagas', () => {
             mapping: {
               'FlytteTil.Fylke': 'fylke',
             },
-          } as ISelectionComponentProps,
+          } as ILayoutCompDropdown,
         ],
       };
 

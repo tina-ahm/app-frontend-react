@@ -11,8 +11,9 @@ import { createRepeatingGroupComponents } from 'src/utils/formLayout';
 import type { IRepeatingGroupTableProps } from 'src/features/form/containers/RepeatingGroupTable';
 import type { IFormData } from 'src/features/form/data';
 import type { ILayoutState } from 'src/features/form/layout/formLayoutSlice';
+import type { ILayoutCompCheckboxes } from 'src/layout/Checkboxes/types';
 import type { ILayoutGroup } from 'src/layout/Group/types';
-import type { ComponentInGroup, ILayoutComponent, ISelectionComponentProps } from 'src/layout/layout';
+import type { ComponentInGroup, ILayoutComponent } from 'src/layout/layout';
 import type { IAttachments } from 'src/shared/resources/attachments';
 import type { IOption, ITextResource } from 'src/types';
 import type { ILanguage } from 'src/types/shared';
@@ -120,7 +121,7 @@ describe('RepeatingGroupTable', () => {
       required: false,
       disabled: false,
       options: options,
-    } as ISelectionComponentProps,
+    } as ILayoutCompCheckboxes,
   ];
   const layout: ILayoutState = getLayout(group, components);
   const currentView = 'FormLayout';
