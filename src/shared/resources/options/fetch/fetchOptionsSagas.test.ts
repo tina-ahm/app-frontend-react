@@ -36,7 +36,7 @@ describe('fetchOptionsSagas', () => {
     };
 
     it('should refetch a given option when an updated field is in a option mapping', () => {
-      jest.spyOn(networking, 'get').mockResolvedValue([]);
+      jest.spyOn(networking, 'httpGet').mockResolvedValue([]);
       const optionsWithField: IOptions = {
         someOption: {
           id: 'someOption',
@@ -87,7 +87,7 @@ describe('fetchOptionsSagas', () => {
 
   describe('fetchOptionsSaga', () => {
     it('should spawn fetchSpecificOptionSaga for each unique optionsId', () => {
-      jest.spyOn(networking, 'get').mockResolvedValue([]);
+      jest.spyOn(networking, 'httpGet').mockResolvedValue([]);
       const formLayoutWithTwoSharedOptionIds: ILayouts = {
         formLayout: [
           {
@@ -154,7 +154,7 @@ describe('fetchOptionsSagas', () => {
     });
 
     it('should spawn multiple fetchSpecificOptionSaga if components have shared optionsId but different mapping', () => {
-      jest.spyOn(networking, 'get').mockResolvedValue([]);
+      jest.spyOn(networking, 'httpGet').mockResolvedValue([]);
       const formLayoutWithSameOptionIdButDifferentMapping: ILayouts = {
         formLayout: [
           {

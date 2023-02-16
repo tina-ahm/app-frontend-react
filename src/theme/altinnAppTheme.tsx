@@ -1,6 +1,6 @@
 import { commonTheme } from 'src/theme/commonTheme';
 
-const AltinnAppTheme = {
+export const AltinnAppTheme = {
   ...commonTheme,
   overrides: {
     MuiToolbar: {
@@ -48,6 +48,7 @@ const AltinnAppTheme = {
   },
   typography: {
     htmlFontSize: 16,
+    // TODO: Change order when switching to 'Inter', that should be first
     fontFamily: [
       '-apple-system',
       'BlinkMacSystemFont',
@@ -83,5 +84,3 @@ const AltinnAppTheme = {
     },
   },
 };
-
-export default AltinnAppTheme;

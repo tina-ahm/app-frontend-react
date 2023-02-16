@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { TextField } from '@altinn/altinn-design-system';
+import { TextField } from '@digdir/design-system-react';
 import axios from 'axios';
 
 import { useDelayedSavedState } from 'src/components/hooks/useDelayedSavedState';
+import { getLanguageFromKey } from 'src/language/sharedLanguage';
 import { AddressLabel } from 'src/layout/Address/AddressLabel';
+import { httpGet } from 'src/utils/network/sharedNetworking';
 import { renderValidationMessagesForComponent } from 'src/utils/render';
-import { get, getLanguageFromKey } from 'src/utils/sharedUtils';
 import type { PropsFromGenericComponent } from 'src/layout';
 import type { IComponentValidations } from 'src/types';
 
@@ -129,7 +130,7 @@ export function AddressComponent({
       hasFetchedPostPlace.current = false;
       try {
         prevZipCode.current = formData.zipCode;
-        const response = await get('https://api.bring.com/shippingguide/api/postalCode.json', {
+        const response = await httpGet('https://api.bring.com/shippingguide/api/postalCode.json', {
           params: {
             clientUrl: window.location.href,
             pnr,
@@ -260,6 +261,7 @@ export function AddressComponent({
           onPaste={() => onAddressPaste()}
           readOnly={readOnly}
           required={required}
+          autoComplete={simplified ? 'street-address' : 'address-line1'}
         />
         {allValidations?.[AddressKeys.address]
           ? renderValidationMessagesForComponent(allValidations[AddressKeys.address], `${id}_${AddressKeys.address}`)
@@ -284,6 +286,7 @@ export function AddressComponent({
             onBlur={updateField.bind(null, AddressKeys.careOf, true)}
             onPaste={() => onCareOfPaste()}
             readOnly={readOnly}
+            autoComplete='address-line2'
           />
           {allValidations?.[AddressKeys.careOf]
             ? renderValidationMessagesForComponent(allValidations[AddressKeys.careOf], `${id}_${AddressKeys.careOf}`)
@@ -312,6 +315,7 @@ export function AddressComponent({
               readOnly={readOnly}
               required={required}
               inputMode='numeric'
+              autoComplete='postal-code'
             />
           </div>
           {allValidations?.[AddressKeys.careOf]
@@ -334,6 +338,7 @@ export function AddressComponent({
             value={postPlace}
             readOnly={true}
             required={required}
+            autoComplete='address-level1'
           />
           {allValidations?.[AddressKeys.postPlace]
             ? renderValidationMessagesForComponent(
@@ -364,6 +369,7 @@ export function AddressComponent({
               onBlur={updateField.bind(null, AddressKeys.houseNumber, true)}
               onPaste={() => onHouseNumberPaste()}
               readOnly={readOnly}
+              autoComplete='address-line3'
             />
           </div>
           {allValidations?.[AddressKeys.houseNumber]

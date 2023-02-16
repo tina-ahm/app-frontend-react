@@ -1,6 +1,6 @@
 import { call, select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
-import type { AxiosError } from 'axios';
+import type { AxiosError, AxiosRequestHeaders } from 'axios';
 
 import { getInitialStateMock } from 'src/__mocks__/initialStateMock';
 import {
@@ -56,7 +56,7 @@ describe('fetchFormDataSagas', () => {
       .provide([
         [select(appMetaDataSelector), { ...mockInitialState.applicationMetadata.applicationMetadata }],
         [select(instanceDataSelector), { ...mockInitialState.instanceData.instance }],
-        [call(networking.get, url), mockFormData],
+        [call(networking.httpGet, url), mockFormData],
       ])
       .put(FormDataActions.fetchFulfilled({ formData: flattenedFormData }))
       .run();
@@ -66,7 +66,6 @@ describe('fetchFormDataSagas', () => {
     const appMetadata = appMetaDataSelector(mockInitialState);
     const instance = instanceDataSelector(mockInitialState);
     const error: AxiosError = {
-      config: {},
       isAxiosError: true,
       message: 'error',
       name: 'error',
@@ -74,15 +73,15 @@ describe('fetchFormDataSagas', () => {
         return {};
       },
       response: {
-        config: {},
+        config: { headers: {} as AxiosRequestHeaders },
+        headers: {} as AxiosRequestHeaders,
         data: null,
-        headers: {},
         status: 500,
         statusText: 'error',
       },
     };
 
-    jest.spyOn(networking, 'get').mockImplementation(() => {
+    jest.spyOn(networking, 'httpGet').mockImplementation(() => {
       throw error;
     });
 
@@ -106,7 +105,7 @@ describe('fetchFormDataSagas', () => {
       .provide([
         [select(appMetaDataSelector), { ...mockInitialState.applicationMetadata.applicationMetadata }],
         [select(instanceDataSelector), { ...mockInitialState.instanceData.instance }],
-        [call(networking.get, url), mockFormData],
+        [call(networking.httpGet, url), mockFormData],
       ])
       .put(FormDataActions.fetchFulfilled({ formData: flattenedFormData }))
       .run();
@@ -116,7 +115,6 @@ describe('fetchFormDataSagas', () => {
     const appMetadata = appMetaDataSelector(mockInitialState);
     const instance = instanceDataSelector(mockInitialState);
     const error: AxiosError = {
-      config: {},
       isAxiosError: true,
       message: 'error',
       name: 'error',
@@ -124,15 +122,15 @@ describe('fetchFormDataSagas', () => {
         return {};
       },
       response: {
-        config: {},
+        config: { headers: {} as AxiosRequestHeaders },
+        headers: {} as AxiosRequestHeaders,
         data: null,
-        headers: {},
         status: 500,
         statusText: 'error',
       },
     };
 
-    jest.spyOn(networking, 'get').mockImplementation(() => {
+    jest.spyOn(networking, 'httpGet').mockImplementation(() => {
       throw error;
     });
 
@@ -176,7 +174,7 @@ describe('fetchFormDataSagas', () => {
         [select(layoutSetsSelector), mockLayoutSets],
         [select(makeGetAllowAnonymousSelector()), false],
         [select(currentSelectedPartyIdSelector), '1234'],
-        [call(networking.get, url, options), mockFormData],
+        [call(networking.httpGet, url, options), mockFormData],
       ])
       .put(FormDataActions.fetchFulfilled({ formData: flattenedFormData }))
       .run();
@@ -208,7 +206,7 @@ describe('fetchFormDataSagas', () => {
         [select(appMetaDataSelector), appMetadata],
         [select(layoutSetsSelector), mockLayoutSets],
         [select(makeGetAllowAnonymousSelector()), true],
-        [call(networking.get, url, options), mockFormData],
+        [call(networking.httpGet, url, options), mockFormData],
       ])
       .put(FormDataActions.fetchFulfilled({ formData: flattenedFormData }))
       .run();
@@ -232,7 +230,6 @@ describe('fetchFormDataSagas', () => {
     };
 
     const error: AxiosError = {
-      config: {},
       isAxiosError: true,
       message: 'error',
       name: 'error',
@@ -240,15 +237,15 @@ describe('fetchFormDataSagas', () => {
         return {};
       },
       response: {
-        config: {},
+        config: { headers: {} as AxiosRequestHeaders },
+        headers: {} as AxiosRequestHeaders,
         data: null,
-        headers: {},
         status: 500,
         statusText: 'error',
       },
     };
 
-    jest.spyOn(networking, 'get').mockImplementation(() => {
+    jest.spyOn(networking, 'httpGet').mockImplementation(() => {
       throw error;
     });
 
@@ -281,7 +278,6 @@ describe('fetchFormDataSagas', () => {
     };
 
     const error: AxiosError = {
-      config: {},
       isAxiosError: true,
       message: 'error',
       name: 'error',
@@ -289,15 +285,15 @@ describe('fetchFormDataSagas', () => {
         return {};
       },
       response: {
-        config: {},
+        config: { headers: {} as AxiosRequestHeaders },
+        headers: {} as AxiosRequestHeaders,
         data: null,
-        headers: {},
         status: 403,
         statusText: 'error',
       },
     };
 
-    jest.spyOn(networking, 'get').mockImplementation(() => {
+    jest.spyOn(networking, 'httpGet').mockImplementation(() => {
       throw error;
     });
 

@@ -34,7 +34,7 @@ import type { IComponentValidations } from 'src/types';
 import type { ILanguage } from 'src/types/shared';
 import type { IComponentFormData } from 'src/utils/formComponentUtils';
 
-const components: {
+export const components: {
   [Type in ComponentExceptGroupAndSummary]: LayoutComponent<Type>;
 } = {
   AddressComponent: new Address(),
@@ -99,4 +99,12 @@ export const FormComponentContext = createContext<IFormComponentContext>({
   baseComponentId: undefined,
 });
 
-export default components;
+/**
+ * This enum is used to distinguish purly presentational components
+ * from interactive form components that can have formData etc.
+ */
+export enum ComponentType {
+  Presentation = 'presentation',
+  Form = 'form',
+  Button = 'button',
+}

@@ -1,6 +1,5 @@
-import * as texts from 'test/e2e/fixtures/texts.json';
-import AppFrontend from 'test/e2e/pageobjects/app-frontend';
-import Common from 'test/e2e/pageobjects/common';
+import { AppFrontend } from 'test/e2e/pageobjects/app-frontend';
+import { Common } from 'test/e2e/pageobjects/common';
 import { Datalist } from 'test/e2e/pageobjects/datalist';
 import { Likert } from 'test/e2e/pageobjects/likert';
 import type { FrontendTestTask } from 'test/e2e/support/global';
@@ -91,7 +90,7 @@ const completeFormFast: { [key in FrontendTestTask]: () => void } = {
     genericSendIn();
   },
   datalist: () => {
-    cy.contains(mui.button, texts.next).click();
+    cy.get(appFrontend.nextButton).click();
     genericSendIn();
   },
   confirm: () => {
@@ -128,7 +127,7 @@ const completeFormSlow: { [key in FrontendTestTask]: () => void } = {
             cy.get(mui.selectedDate).should('be.visible').click();
           });
         cy.get(appFrontend.changeOfName.upload).selectFile('test/e2e/fixtures/test.pdf', { force: true });
-        cy.contains(mui.button, texts.next).click();
+        cy.get(appFrontend.nextButton).click();
       });
   },
   group: () => {
@@ -139,7 +138,7 @@ const completeFormSlow: { [key in FrontendTestTask]: () => void } = {
       contents: Cypress.Buffer.from('hello world'),
     });
 
-    cy.contains(mui.button, texts.next).click();
+    cy.get(appFrontend.nextButton).click();
     cy.get(appFrontend.group.showGroupToContinue).then((checkbox) => {
       cy.wrap(checkbox).should('be.visible').find('input').check();
     });
@@ -180,9 +179,9 @@ const completeFormSlow: { [key in FrontendTestTask]: () => void } = {
 
     cy.get(appFrontend.group.saveMainGroup).should('be.visible').click().should('not.exist');
 
-    cy.contains(mui.button, texts.next).click();
+    cy.get(appFrontend.nextButton).click();
     cy.get(appFrontend.group.sendersName).should('be.visible').type('automation');
-    cy.contains(mui.button, texts.next).click();
+    cy.get(appFrontend.nextButton).click();
     cy.get(appFrontend.group.summaryText).should('be.visible');
   },
   likert: () => {
@@ -191,7 +190,7 @@ const completeFormSlow: { [key in FrontendTestTask]: () => void } = {
   },
   datalist: () => {
     cy.get(dataListPage.tableBody).contains('Caroline').parent('td').parent('tr').click();
-    cy.contains(mui.button, texts.next).click();
+    cy.get(appFrontend.nextButton).click();
   },
   confirm: () => {
     // Nothing to fill out here, intentionally empty
@@ -246,3 +245,7 @@ Cypress.Commands.add('sendIn', (task) => {
   const tasks = Object.keys(completeFormFast) as FrontendTestTask[];
   currentTask = tasks[tasks.indexOf(task || currentTask || 'message') + 1];
 });
+
+export function resetNavigation() {
+  currentTask = undefined;
+}

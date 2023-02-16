@@ -1,15 +1,17 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import { useAppDispatch, useAppSelector } from 'src/common/hooks';
-import Entrypoint from 'src/features/entrypoint/Entrypoint';
-import PartySelection from 'src/features/instantiate/containers/PartySelection';
-import UnknownError from 'src/features/instantiate/containers/UnknownError';
+import { useAppDispatch } from 'src/common/hooks/useAppDispatch';
+import { useAppSelector } from 'src/common/hooks/useAppSelector';
+import { Entrypoint } from 'src/features/entrypoint/Entrypoint';
+import { PartySelection } from 'src/features/instantiate/containers/PartySelection';
+import { UnknownError } from 'src/features/instantiate/containers/UnknownError';
 import { makeGetAllowAnonymousSelector } from 'src/selectors/getAllowAnonymous';
 import { makeGetHasErrorsSelector } from 'src/selectors/getErrors';
-import ProcessWrapper from 'src/shared/containers/ProcessWrapper';
+import { selectAppName, selectAppOwner } from 'src/selectors/language';
+import { ProcessWrapper } from 'src/shared/containers/ProcessWrapper';
 import { QueueActions } from 'src/shared/resources/queue/queueSlice';
-import { get } from 'src/utils/network/networking';
+import { httpGet } from 'src/utils/network/networking';
 import { getEnvironmentLoginUrl, refreshJwtTokenUrl } from 'src/utils/urls/appUrlHelper';
 
 // 1 minute = 60.000ms
@@ -25,7 +27,19 @@ export const App = () => {
   const allowAnonymousSelector = makeGetAllowAnonymousSelector();
   const allowAnonymous = useAppSelector(allowAnonymousSelector);
 
-  const [ready, setReady] = React.useState(false);
+  const appName = useAppSelector(selectAppName);
+  const appOwner = useAppSelector(selectAppOwner);
+
+  // Set the title of the app
+  React.useEffect(() => {
+    if (appName && appOwner) {
+      document.title = `${appName} • ${appOwner}`;
+    } else if (appName && !appOwner) {
+      document.title = appName;
+    } else if (!appName && appOwner) {
+      document.title = appOwner;
+    }
+  }, [appOwner, appName]);
 
   React.useEffect(() => {
     function setUpEventListeners() {
@@ -46,7 +60,7 @@ export const App = () => {
       const timeNow = Date.now();
       if (timeNow - lastRefreshTokenTimestamp.current > TEN_MINUTE_IN_MILLISECONDS) {
         lastRefreshTokenTimestamp.current = timeNow;
-        get(refreshJwtTokenUrl).catch((err) => {
+        httpGet(refreshJwtTokenUrl).catch((err) => {
           // Most likely the user has an expired token, so we redirect to the login-page
           try {
             window.location.href = getEnvironmentLoginUrl(appOidcProvider || null);
@@ -55,11 +69,6 @@ export const App = () => {
           }
         });
       }
-    }
-
-    if (allowAnonymous !== undefined) {
-      // Page is ready to be rendered once allowAnonymous value has been determined
-      setReady(true);
     }
 
     if (allowAnonymous === false) {
@@ -81,6 +90,8 @@ export const App = () => {
     return <UnknownError />;
   }
 
+  // Page is ready to be rendered once allowAnonymous value has been determined
+  const ready = allowAnonymous !== undefined;
   if (!ready) {
     return null;
   }

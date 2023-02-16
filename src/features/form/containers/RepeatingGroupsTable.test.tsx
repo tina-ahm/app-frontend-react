@@ -1,10 +1,11 @@
-import * as React from 'react';
+import React from 'react';
 
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as ResizeObserverModule from 'resize-observer-polyfill';
 
-import { getFormLayoutGroupMock } from 'src/__mocks__/mocks';
+import { getFormLayoutGroupMock } from 'src/__mocks__/formLayoutGroupMock';
+import { getInitialStateMock } from 'src/__mocks__/initialStateMock';
 import { RepeatingGroupTable } from 'src/features/form/containers/RepeatingGroupTable';
 import { mockMediaQuery, renderWithProviders } from 'src/testUtils';
 import { createRepeatingGroupComponents } from 'src/utils/formLayout';
@@ -156,7 +157,7 @@ describe('RepeatingGroupTable', () => {
       const group: ILayoutGroup = getFormLayoutGroupMock({
         edit: { alertOnDelete: true },
       });
-      const layout: ILayoutState = getLayout(group, components);
+      const layout = getLayout(group, components);
       const repeatingGroupDeepCopyComponents = createRepeatingGroupComponents(
         group,
         components,
@@ -168,11 +169,14 @@ describe('RepeatingGroupTable', () => {
         return;
       }
 
-      render({
-        container: group,
-        repeatingGroupDeepCopyComponents: repeatingGroupDeepCopyComponents,
-        layout: layout.layouts[currentView],
-      });
+      render(
+        {
+          container: group,
+          repeatingGroupDeepCopyComponents: repeatingGroupDeepCopyComponents,
+          layout: layout.layouts[currentView],
+        },
+        layout,
+      );
     });
 
     it('should open and close delete-warning on delete click when alertOnDelete is active', async () => {
@@ -234,7 +238,7 @@ describe('RepeatingGroupTable', () => {
     });
   });
 
-  const render = (props: Partial<IRepeatingGroupTableProps> = {}) => {
+  const render = (props: Partial<IRepeatingGroupTableProps> = {}, newLayout?: ILayoutState) => {
     const allProps: IRepeatingGroupTableProps = {
       container: group,
       attachments: attachments,
@@ -258,7 +262,13 @@ describe('RepeatingGroupTable', () => {
       ...props,
     };
 
-    const { container } = renderWithProviders(<RepeatingGroupTable {...allProps} />);
+    const preloadedState = getInitialStateMock();
+    preloadedState.formLayout = newLayout || layout;
+    preloadedState.attachments.attachments = attachments;
+    preloadedState.textResources.resources = textResources;
+    preloadedState.formData.formData = data;
+
+    const { container } = renderWithProviders(<RepeatingGroupTable {...allProps} />, { preloadedState });
 
     return container;
   };

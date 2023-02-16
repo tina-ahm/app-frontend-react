@@ -1,16 +1,19 @@
-import * as React from 'react';
+import React from 'react';
 
 import { Grid, TableCell, Typography } from '@material-ui/core';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
-import { useAppSelector } from 'src/common/hooks';
+import { useAppSelector } from 'src/common/hooks/useAppSelector';
+import { AltinnSpinner } from 'src/components/AltinnSpinner';
 import { useGetOptions } from 'src/components/hooks';
-import { AltinnSpinner, AltinnTable, AltinnTableBody, AltinnTableHeader, AltinnTableRow } from 'src/components/shared';
-import { ExprDefaultsForGroup } from 'src/features/expressions';
-import { useExpressions } from 'src/features/expressions/useExpressions';
+import { AltinnTableBody } from 'src/components/molecules/AltinnTableBody';
+import { AltinnTableHeader } from 'src/components/molecules/AltinnTableHeader';
+import { AltinnTableRow } from 'src/components/molecules/AltinnTableRow';
+import { AltinnTable } from 'src/components/organisms/AltinnTable';
 import { GenericComponent } from 'src/layout/GenericComponent';
 import { LayoutStyle } from 'src/types';
 import { getTextResource } from 'src/utils/formComponentUtils';
+import { useResolvedNode } from 'src/utils/layout/ExprContext';
 import { getOptionLookupKey } from 'src/utils/options';
 import type { ILayoutGroup } from 'src/layout/Group/types';
 import type { ComponentInGroup } from 'src/layout/layout';
@@ -38,18 +41,16 @@ export const RepeatingGroupsLikertContainer = ({
   const lookupKey = optionsId && getOptionLookupKey({ id: optionsId, mapping });
   const fetchingOptions = useAppSelector((state) => lookupKey && state.optionState.options[lookupKey]?.loading);
 
-  const textResourceBindings = useExpressions(container.textResourceBindings, {
-    forComponentId: container.id,
-    defaults: ExprDefaultsForGroup.textResourceBindings,
-  });
+  const node = useResolvedNode(container);
 
   const getText = (key: string | undefined) => {
     return key ? getTextResource(key, textResources) : undefined;
   };
 
-  const title = getText(textResourceBindings?.title);
-  const description = getText(textResourceBindings?.description);
-  const leftColumnHeader = getText(textResourceBindings?.leftColumnHeader);
+  const title = getText(node?.item.textResourceBindings?.title);
+  const description = getText(node?.item.textResourceBindings?.description);
+  const leftColumnHeader = getText(node?.item.textResourceBindings?.leftColumnHeader);
+
   const titleId = `likert-title-${id}`;
   const descriptionId = `likert-description-${id}`;
 
@@ -128,7 +129,7 @@ export const RepeatingGroupsLikertContainer = ({
             padding={'dense'}
           >
             <AltinnTableRow>
-              <TableCell>{leftColumnHeader}</TableCell>
+              {leftColumnHeader ? <TableCell>{leftColumnHeader}</TableCell> : <td />}
               {calculatedOptions.map((option, index) => {
                 const colLabelId = `${id}-likert-columnheader-${index}`;
                 return (

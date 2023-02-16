@@ -39,6 +39,9 @@ export const getValidationUrl = (instanceId: string) => `${appPath}/instances/${
 export const getDataValidationUrl = (instanceId: string, dataGuid: string) =>
   `${appPath}/instances/${instanceId}/data/${dataGuid}/validate`;
 
+export const getPdfFormatUrl = (instanceId: string, dataGuid: string) =>
+  `${appPath}/instances/${instanceId}/data/${dataGuid}/pdf/format`;
+
 export const getProcessNextUrl = (taskId?: string | null) => {
   if (taskId) {
     return `${appPath}/instances/${altinnWindow.instanceId}/process/next?elementId=${encodeURIComponent(taskId)}`;
@@ -47,6 +50,8 @@ export const getProcessNextUrl = (taskId?: string | null) => {
 };
 
 export const getRedirectUrl = (returnUrl: string) => `${appPath}/api/v1/redirect?url=${encodeURIComponent(returnUrl)}`;
+
+export const getFeatureSetUrl = () => `${appPath}/api/v1/featureset`;
 
 export const getUpgradeAuthLevelUrl = (reqAuthLevel: string) => {
   const redirect: string =

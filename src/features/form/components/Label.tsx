@@ -18,7 +18,7 @@ export interface IFormLabelProps {
   helpText: string | number | boolean | React.ReactNode | undefined | null;
 }
 
-export default function Label(props: IFormLabelProps) {
+export function Label(props: IFormLabelProps) {
   if (!props.labelText) {
     return null;
   }
@@ -34,6 +34,7 @@ export default function Label(props: IFormLabelProps) {
           className='a-form-label title-label'
           htmlFor={props.id}
           data-testid={`label-${props.id}`}
+          id={`label-${props.id}`}
         >
           {props.labelText}
           <RequiredIndicator

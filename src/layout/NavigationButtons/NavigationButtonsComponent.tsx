@@ -1,12 +1,13 @@
-import * as React from 'react';
+import React from 'react';
 
+import { Button } from '@digdir/design-system-react';
 import { Grid } from '@material-ui/core';
 
-import { useAppDispatch, useAppSelector } from 'src/common/hooks';
-import { AltinnButton } from 'src/components/shared';
+import { useAppDispatch } from 'src/common/hooks/useAppDispatch';
+import { useAppSelector } from 'src/common/hooks/useAppSelector';
 import { FormLayoutActions } from 'src/features/form/layout/formLayoutSlice';
 import { selectLayoutOrder } from 'src/selectors/getLayoutOrder';
-import { Triggers } from 'src/types';
+import { reducePageValidations, Triggers } from 'src/types';
 import { getTextFromAppOrDefault } from 'src/utils/textResource';
 import type { IKeepComponentScrollPos } from 'src/features/form/layout/formLayoutTypes';
 import type { PropsFromGenericComponent } from 'src/layout';
@@ -17,8 +18,8 @@ export type INavigationButtons = PropsFromGenericComponent<'NavigationButtons'>;
 export function NavigationButtonsComponent(props: INavigationButtons) {
   const dispatch = useAppDispatch();
 
-  const refPrev = React.useRef<HTMLButtonElement>();
-  const refNext = React.useRef<HTMLButtonElement>();
+  const refPrev = React.useRef<HTMLButtonElement>(null);
+  const refNext = React.useRef<HTMLButtonElement>(null);
 
   const keepScrollPos = useAppSelector((state) => state.formLayout.uiConfig.keepScrollPos);
 
@@ -49,7 +50,11 @@ export function NavigationButtonsComponent(props: INavigationButtons) {
   const onClickPrevious = () => {
     const goToView = previous || (orderedLayoutKeys && orderedLayoutKeys[orderedLayoutKeys.indexOf(currentView) - 1]);
     if (goToView) {
-      dispatch(FormLayoutActions.updateCurrentView({ newView: goToView }));
+      dispatch(
+        FormLayoutActions.updateCurrentView({
+          newView: goToView,
+        }),
+      );
     }
   };
 
@@ -58,9 +63,7 @@ export function NavigationButtonsComponent(props: INavigationButtons) {
   }, []);
 
   const OnClickNext = () => {
-    const runPageValidations = !returnToView && triggers?.includes(Triggers.ValidatePage);
-    const runAllValidations = returnToView || triggers?.includes(Triggers.ValidateAllPages);
-    const runValidations = (runAllValidations && 'allPages') || (runPageValidations && 'page') || undefined;
+    const runValidations = reducePageValidations(triggers);
     const keepScrollPosAction: IKeepComponentScrollPos = {
       componentId: props.id,
       offsetTop: getScrollPosition(),
@@ -114,22 +117,24 @@ export function NavigationButtonsComponent(props: INavigationButtons) {
     >
       {!disableBack && props.showBackButton && (
         <Grid item>
-          <AltinnButton
+          <Button
             ref={refPrev}
-            btnText={getTextFromAppOrDefault(backTextKey, textResources, language, undefined, true)}
-            onClickFunction={onClickPrevious}
+            onClick={onClickPrevious}
             disabled={disableBack}
-          />
+          >
+            {getTextFromAppOrDefault(backTextKey, textResources, language, undefined, true)}
+          </Button>
         </Grid>
       )}
       {!disableNext && (
         <Grid item>
-          <AltinnButton
+          <Button
             ref={refNext}
-            btnText={getTextFromAppOrDefault(nextTextKey, textResources, language, undefined, true)}
-            onClickFunction={OnClickNext}
+            onClick={OnClickNext}
             disabled={disableNext}
-          />
+          >
+            {getTextFromAppOrDefault(nextTextKey, textResources, language, undefined, true)}
+          </Button>
         </Grid>
       )}
     </Grid>
