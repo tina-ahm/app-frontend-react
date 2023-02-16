@@ -18,7 +18,9 @@ import {
   smartLowerCaseFirst,
 } from 'src/utils/formComponentUtils';
 import type { IFormData } from 'src/features/form/data';
-import type { IGridStyling, ILayoutComponent, ISelectionComponentProps } from 'src/layout/layout';
+import type { ILayoutCompCheckboxes } from 'src/layout/Checkboxes/types';
+import type { IGridStyling, ILayoutComponent } from 'src/layout/layout';
+import type { ILayoutCompRadioButtons } from 'src/layout/RadioButtons/types';
 import type { IAttachment, IAttachments } from 'src/shared/resources/attachments';
 import type {
   IComponentBindingValidation,
@@ -188,7 +190,7 @@ describe('formComponentUtils', () => {
       const checkboxComponent = {
         type: 'Checkboxes',
         optionsId: 'mockOption',
-      } as ISelectionComponentProps;
+      } as ILayoutCompCheckboxes;
       const result = getDisplayFormData(
         'mockBindingCheckbox',
         checkboxComponent,
@@ -207,7 +209,7 @@ describe('formComponentUtils', () => {
         type: 'Checkboxes',
         optionsId: 'mockOptionsWithMapping',
         mapping: { someDataField: 'someUrlParam' },
-      } as unknown as ISelectionComponentProps;
+      } as unknown as ILayoutCompCheckboxes;
       const result = getDisplayFormData(
         'mockBindingCheckboxWithMapping',
         checkboxComponent,
@@ -225,7 +227,7 @@ describe('formComponentUtils', () => {
       const checkboxComponent = {
         type: 'Checkboxes',
         optionsId: 'mockOption',
-      } as ISelectionComponentProps;
+      } as ILayoutCompCheckboxes;
       const result = getDisplayFormData(
         'mockBindingCheckbox',
         checkboxComponent,
@@ -248,7 +250,7 @@ describe('formComponentUtils', () => {
       const component = {
         type,
         optionsId: 'mockOption',
-      } as ISelectionComponentProps;
+      } as ILayoutComponent<'Likert'> | ILayoutComponent<'Dropdown'> | ILayoutComponent<'RadioButtons'>;
       const result = getDisplayFormData(
         `mockBinding${type}`,
         component,
@@ -269,7 +271,7 @@ describe('formComponentUtils', () => {
           type,
           optionsId: 'mockOptionsWithMapping',
           mapping: { someDataField: 'someUrlParam' },
-        } as unknown as ISelectionComponentProps;
+        } as unknown as ILayoutComponent<'Likert'> | ILayoutComponent<'Dropdown'> | ILayoutComponent<'RadioButtons'>;
         const result = getDisplayFormData(
           `mockBinding${type}WithMapping`,
           component,
@@ -289,7 +291,7 @@ describe('formComponentUtils', () => {
         type: 'RadioButtons',
         optionsId: 'mockOption',
         id: 'some-id',
-      } as ISelectionComponentProps;
+      } as ILayoutCompRadioButtons;
       const result = getDisplayFormData(
         'mockBindingRadioButtons',
         radioButtonComponent,
@@ -309,7 +311,7 @@ describe('formComponentUtils', () => {
         optionsId: 'mockOptionsWithMapping',
         mapping: { someDataField: 'someUrlParam' },
         id: 'some-id',
-      } as unknown as ISelectionComponentProps;
+      } as ILayoutCompRadioButtons;
       const result = getDisplayFormData(
         'mockBindingRadioButtonsWithMapping',
         radioButtonComponentWithMapping,
@@ -332,7 +334,7 @@ describe('formComponentUtils', () => {
           label: 'dropdown.label',
           value: 'someGroup[{0}].fieldUsedAsValue',
         },
-      } as unknown as ISelectionComponentProps;
+      } as ILayoutCompRadioButtons;
 
       const repGroups: IRepeatingGroups = {
         group1: {
@@ -406,7 +408,7 @@ describe('formComponentUtils', () => {
         dataModelBindings: {
           simpleBinding: 'group.checkbox',
         },
-      } as unknown as ISelectionComponentProps;
+      } as ILayoutCompCheckboxes;
       const result = getFormDataForComponentInRepeatingGroup(
         mockFormData,
         mockAttachments,

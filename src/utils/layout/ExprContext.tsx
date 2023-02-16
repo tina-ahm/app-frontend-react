@@ -2,7 +2,7 @@ import React, { useContext, useMemo } from 'react';
 
 import { useAppSelector } from 'src/common/hooks/useAppSelector';
 import { dataSourcesFromState, resolvedNodesInLayouts, rewriteTextResourceBindings } from 'src/utils/layout/hierarchy';
-import type { ComponentExceptGroup, ILayoutComponent } from 'src/layout/layout';
+import type { ComponentExceptGroupAndSummary, ILayoutComponent } from 'src/layout/layout';
 import type { LayoutNode, LayoutRootNodeCollection } from 'src/utils/layout/hierarchy';
 import type { ComponentOf } from 'src/utils/layout/hierarchy.types';
 
@@ -10,7 +10,7 @@ export const ExprContext = React.createContext<LayoutRootNodeCollection<'resolve
 
 type MaybeSpecificItem<T> = T extends ILayoutComponent
   ? T extends { type: infer Type }
-    ? Type extends ComponentExceptGroup
+    ? Type extends ComponentExceptGroupAndSummary
       ? LayoutNode<'resolved', ComponentOf<'resolved', Type>>
       : LayoutNode<'resolved'>
     : LayoutNode<'resolved'>

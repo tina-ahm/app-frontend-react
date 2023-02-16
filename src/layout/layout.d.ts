@@ -125,6 +125,8 @@ interface Map {
 }
 
 export type ComponentTypes = keyof Map;
+type AllComponents = Map[ComponentTypes];
+
 export type ComponentExceptGroup = Exclude<ComponentTypes, 'Group'>;
 export type ComponentExceptGroupAndSummary = Exclude<ComponentExceptGroup, 'Summary'>;
 export type RenderableGenericComponent = ILayoutComponent<ComponentExceptGroupAndSummary>;
@@ -140,7 +142,10 @@ export type ComponentInGroup = RenderableGenericComponent | ILayoutGroup;
  *
  *  const myImageComponent:ILayoutComponent<'Image'> = ...
  */
-export type ILayoutComponent<Type extends ComponentExceptGroup = ComponentExceptGroup> = Map[Type];
+export type ILayoutComponent<Type extends ComponentExceptGroup = ComponentExceptGroup> = Extract<
+  AllComponents,
+  { type: Type }
+>;
 
 export type ILayoutComponentOrGroup = ILayoutGroup | ILayoutComponent;
 

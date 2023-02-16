@@ -11,7 +11,7 @@ import {
   xPaddingSmall,
 } from 'src/features/form/components/FullWidthWrapper';
 import { RepeatingGroupsEditContainer } from 'src/features/form/containers/RepeatingGroupsEditContainer';
-import { RepeatingGroupTableRow } from 'src/features/form/containers/RepeatingGroupTableRow';
+import { getTextAlignment, RepeatingGroupTableRow } from 'src/features/form/containers/RepeatingGroupTableRow';
 import { getLanguageFromKey } from 'src/language/sharedLanguage';
 import { ComponentType } from 'src/layout';
 import { getLayoutComponentObject } from 'src/layout/LayoutComponent';

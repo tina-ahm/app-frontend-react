@@ -12,7 +12,7 @@ import { getOptionLookupKey, getRelevantFormDataForOptionSource, setupSourceOpti
 import { getTextFromAppOrDefault } from 'src/utils/textResource';
 import type { IFormData } from 'src/features/form/data';
 import type { ILayoutGroup } from 'src/layout/Group/types';
-import type { IDataModelBindings, IGridStyling, ILayoutComponent, ISelectionComponentProps } from 'src/layout/layout';
+import type { IDataModelBindings, IGridStyling, ILayoutComponent } from 'src/layout/layout';
 import type { IAttachment, IAttachments } from 'src/shared/resources/attachments';
 import type {
   IComponentValidations,
@@ -141,25 +141,24 @@ export const getDisplayFormData = (
 
   if (formDataValue) {
     if (component.type === 'Dropdown' || component.type === 'RadioButtons' || component.type === 'Likert') {
-      const selectionComponent = component as ISelectionComponentProps;
       let label: string | undefined;
-      if (selectionComponent.optionsId) {
+      if (component.optionsId) {
         label = options[
           getOptionLookupKey({
-            id: selectionComponent.optionsId,
-            mapping: selectionComponent.mapping,
+            id: component.optionsId,
+            mapping: component.mapping,
           })
         ]?.options?.find((option: IOption) => option.value === formDataValue)?.label;
-      } else if (selectionComponent.options) {
-        label = selectionComponent.options.find((option: IOption) => option.value === formDataValue)?.label;
-      } else if (selectionComponent.source) {
-        const relevantTextResource = textResources.find((e) => e.id === selectionComponent.source?.label);
+      } else if (component.options) {
+        label = component.options.find((option: IOption) => option.value === formDataValue)?.label;
+      } else if (component.source) {
+        const relevantTextResource = textResources.find((e) => e.id === component.source?.label);
         const reduxOptions =
           relevantTextResource &&
           setupSourceOptions({
-            source: selectionComponent.source,
+            source: component.source,
             relevantTextResource,
-            relevantFormData: getRelevantFormDataForOptionSource(formData, selectionComponent.source),
+            relevantFormData: getRelevantFormDataForOptionSource(formData, component.source),
             repeatingGroups,
             dataSources: {
               dataModel: formData,
@@ -175,7 +174,6 @@ export const getDisplayFormData = (
       return getTextResourceByKey(label, textResources) || formDataValue;
     }
     if (component.type === 'Checkboxes' || component.type === 'MultipleSelect') {
-      const selectionComponent = component as ISelectionComponentProps;
       let label = '';
       const data: string = formData[dataModelBinding];
       const split = data?.split(',');
@@ -183,13 +181,12 @@ export const getDisplayFormData = (
         const displayFormData = {};
         split?.forEach((value: string) => {
           const key =
-            selectionComponent.optionsId &&
+            component.optionsId &&
             getOptionLookupKey({
-              id: selectionComponent.optionsId,
-              mapping: selectionComponent.mapping,
+              id: component.optionsId,
+              mapping: component.mapping,
             });
-          const optionsForComponent =
-            selectionComponent?.optionsId && key ? options[key]?.options : selectionComponent.options;
+          const optionsForComponent = component?.optionsId && key ? options[key]?.options : component.options;
           const textKey = optionsForComponent?.find((option: IOption) => option.value === value)?.label || '';
           displayFormData[value] = getTextResourceByKey(textKey, textResources) || formDataValue;
         });
@@ -198,19 +195,19 @@ export const getDisplayFormData = (
       }
 
       split?.forEach((value: string) => {
-        if (selectionComponent?.options) {
+        if (component?.options) {
           label +=
             getTextResourceByKey(
-              selectionComponent.options?.find((option: IOption) => option.value === value)?.label,
+              component.options?.find((option: IOption) => option.value === value)?.label,
               textResources,
             ) || '';
-        } else if (selectionComponent.optionsId) {
+        } else if (component.optionsId) {
           label +=
             getTextResourceByKey(
               options[
                 getOptionLookupKey({
-                  id: selectionComponent.optionsId,
-                  mapping: selectionComponent.mapping,
+                  id: component.optionsId,
+                  mapping: component.mapping,
                 })
               ]?.options?.find((option: IOption) => option.value === value)?.label,
               textResources,
