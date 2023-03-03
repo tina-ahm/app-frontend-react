@@ -8,6 +8,7 @@ import { useAppDispatch } from 'src/common/hooks/useAppDispatch';
 import { useAppSelector } from 'src/common/hooks/useAppSelector';
 import { ErrorPaper } from 'src/components/message/ErrorPaper';
 import { SummaryComponentSwitch } from 'src/components/summary/SummaryComponentSwitch';
+import { SummaryContextProvider } from 'src/components/summary/SummaryContext';
 import { DisplayGroupContainer } from 'src/features/form/containers/DisplayGroupContainer';
 import { mapGroupComponents } from 'src/features/form/containers/formUtils';
 import { FormLayoutActions } from 'src/features/form/layout/formLayoutSlice';
@@ -77,7 +78,8 @@ export function SummaryComponent(_props: ISummaryComponent) {
     state.formLayout.layouts && pageRef ? state.formLayout.layouts[pageRef] : undefined,
   );
   const attachments = useAppSelector((state: IRuntimeState) => state.attachments.attachments);
-  const formComponent = useResolvedNode(componentRef)?.item;
+  const targetNode = useResolvedNode(componentRef);
+  const formComponent = targetNode?.item;
   const summaryComponent = useResolvedNode(id)?.item;
   const layoutComponent = getLayoutComponentObject(formComponent?.type);
   const formComponentLegacy = useAppSelector(
@@ -195,6 +197,15 @@ export function SummaryComponent(_props: ISummaryComponent) {
   } else if (layoutComponent?.getComponentType() === ComponentType.Presentation && formComponent?.type !== 'Group') {
     // Render non-input components as normal
     return <GenericComponent {...formComponent} />;
+  }
+
+  if (layoutComponent) {
+    const RenderSummary = layoutComponent.renderSummary;
+    return (
+      <SummaryContextProvider>
+        <RenderSummary targetNode={targetNode as any} />;
+      </SummaryContextProvider>
+    );
   }
 
   const displayGrid = display && display.useComponentGrid ? formComponent?.grid : grid;

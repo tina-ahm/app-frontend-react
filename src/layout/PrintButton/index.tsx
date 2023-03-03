@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { ComponentType } from 'src/layout';
-import { LayoutComponent } from 'src/layout/LayoutComponent';
+import { PresentationLayoutComponent } from 'src/layout/LayoutComponent';
 import { PrintButtonComponent } from 'src/layout/PrintButton/PrintButtonComponent';
 
-export class PrintButton extends LayoutComponent<'PrintButton'> {
+export class PrintButton extends PresentationLayoutComponent<'PrintButton'> {
   render(): JSX.Element | null {
     return <PrintButtonComponent />;
   }

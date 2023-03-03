@@ -1,16 +1,16 @@
 import React from 'react';
 
 import { ComponentType } from 'src/layout';
-import { LayoutComponent } from 'src/layout/LayoutComponent';
+import { PresentationLayoutComponent } from 'src/layout/LayoutComponent';
 import { ParagraphComponent } from 'src/layout/Paragraph/ParagraphComponent';
 import type { PropsFromGenericComponent } from 'src/layout';
 
-export class Paragraph extends LayoutComponent<'Paragraph'> {
+export class Paragraph extends PresentationLayoutComponent<'Paragraph'> {
   render(props: PropsFromGenericComponent<'Paragraph'>): JSX.Element | null {
     return <ParagraphComponent {...props} />;
   }
 
-  renderWithLabel(): boolean {
+  override renderWithLabel(): boolean {
     return false;
   }
 

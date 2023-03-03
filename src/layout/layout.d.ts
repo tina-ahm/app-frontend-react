@@ -90,11 +90,12 @@ export interface IInputFormatting {
 }
 
 /**
- * This interface type defines all the possible components, along with their 'type' key and associated layout
- * definition. If you want to reference a particular component layout type you can either reference the individual
+ * This interface type defines all the regular components, along with their 'type' key and associated layout definition.
+ *
+ * If you want to reference a particular component layout type you can either reference the individual
  * type (ex. ILayoutCompTextArea), or ILayoutComponent<'TextArea'>.
  */
-interface Map {
+export interface RegularComponents {
   AddressComponent: ILayoutCompAddress;
   AttachmentList: ILayoutCompAttachmentList;
   Button: ILayoutCompButton;
@@ -104,7 +105,6 @@ interface Map {
   Dropdown: ILayoutCompDropdown;
   FileUpload: ILayoutCompFileUpload;
   FileUploadWithTag: ILayoutCompFileUploadWithTag;
-  Group: ILayoutGroup;
   Header: ILayoutCompHeader;
   Image: ILayoutCompImage;
   Input: ILayoutCompInput;
@@ -120,16 +120,26 @@ interface Map {
   Paragraph: ILayoutCompParagraph;
   PrintButton: ILayoutCompPrintButton;
   RadioButtons: ILayoutCompRadioButtons;
-  Summary: ILayoutCompSummary;
   TextArea: ILayoutCompTextArea;
 }
+
+/**
+ * These are 'special' components. These are described as components in the layout file, but their behaviour is special,
+ * and more like a feature. They cannot be rendered by GenericComponent directly.
+ */
+interface SpecialComponents {
+  Group: ILayoutGroup;
+  Summary: ILayoutCompSummary;
+}
+
+type Map = RegularComponents & SpecialComponents;
 
 export type ComponentTypes = keyof Map;
 type AllComponents = Map[ComponentTypes];
 
 export type ComponentExceptGroup = Exclude<ComponentTypes, 'Group'>;
-export type ComponentExceptGroupAndSummary = Exclude<ComponentExceptGroup, 'Summary'>;
-export type RenderableGenericComponent = ILayoutComponent<ComponentExceptGroupAndSummary>;
+export type RegularComponent = keyof RegularComponents;
+export type RenderableGenericComponent = ILayoutComponent<RegularComponent>;
 export type ComponentInGroup = RenderableGenericComponent | ILayoutGroup;
 
 /**
@@ -142,15 +152,16 @@ export type ComponentInGroup = RenderableGenericComponent | ILayoutGroup;
  *
  *  const myImageComponent:ILayoutComponent<'Image'> = ...
  */
-export type ILayoutComponent<Type extends ComponentExceptGroup = ComponentExceptGroup> = Extract<
-  AllComponents,
-  { type: Type }
->;
+export type ILayoutComponent<Type extends ComponentExceptGroup = ComponentExceptGroup> = Type extends 'Summary'
+  ? ILayoutCompSummary
+  : Extract<AllComponents, { type: Type }>;
 
 /**
  * Alternative version of the one above
  */
 export type ILayoutComponentExact<Type extends ComponentExceptGroup> = Map[Type];
+
+export type ComponentSummaryData<Type extends RegularComponent> = Map[Type]['summaryData'];
 
 export type ILayoutComponentOrGroup = ILayoutGroup | ILayoutComponent;
 

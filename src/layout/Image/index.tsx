@@ -2,15 +2,15 @@ import React from 'react';
 
 import { ComponentType } from 'src/layout';
 import { ImageComponent } from 'src/layout/Image/ImageComponent';
-import { LayoutComponent } from 'src/layout/LayoutComponent';
+import { PresentationLayoutComponent } from 'src/layout/LayoutComponent';
 import type { PropsFromGenericComponent } from 'src/layout';
 
-export class Image extends LayoutComponent<'Image'> {
+export class Image extends PresentationLayoutComponent<'Image'> {
   render(props: PropsFromGenericComponent<'Image'>): JSX.Element | null {
     return <ImageComponent {...props} />;
   }
 
-  renderWithLabel(): boolean {
+  override renderWithLabel(): boolean {
     return false;
   }
 

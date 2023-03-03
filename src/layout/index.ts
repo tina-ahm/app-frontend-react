@@ -28,14 +28,14 @@ import { RadioButtons } from 'src/layout/RadioButtons/index';
 import { TextArea } from 'src/layout/TextArea/index';
 import type { ExprResolved } from 'src/features/expressions/types';
 import type { IGenericComponentProps } from 'src/layout/GenericComponent';
-import type { ComponentExceptGroup, ComponentExceptGroupAndSummary, IGrid, ILayoutComponent } from 'src/layout/layout';
+import type { ComponentExceptGroup, IGrid, ILayoutComponent, RegularComponent } from 'src/layout/layout';
 import type { LayoutComponent } from 'src/layout/LayoutComponent';
 import type { IComponentValidations } from 'src/types';
 import type { ILanguage } from 'src/types/shared';
 import type { IComponentFormData } from 'src/utils/formComponentUtils';
 
 export const components: {
-  [Type in ComponentExceptGroupAndSummary]: LayoutComponent<Type>;
+  [Type in RegularComponent]: LayoutComponent<Type, any>;
 } = {
   AddressComponent: new Address(),
   AttachmentList: new AttachmentList(),

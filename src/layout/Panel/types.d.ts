@@ -5,14 +5,10 @@ export interface ILayoutCompPanelBase {
   showIcon?: boolean;
 }
 
-export interface IGroupReference {
-  group: string;
-}
-
 export interface IGroupPanel extends ILayoutCompPanelBase {
   iconUrl?: string;
   iconAlt?: string;
-  groupReference?: IGroupReference;
+  groupReference?: { group: string };
 }
 
 export type ILayoutCompPanel = ILayoutCompBase<'Panel'> & ILayoutCompPanelBase;
