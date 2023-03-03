@@ -17,8 +17,10 @@ import {
   selectComponentTexts,
   smartLowerCaseFirst,
 } from 'src/utils/formComponentUtils';
+import type { ExprUnresolved } from 'src/features/expressions/types';
 import type { IFormData } from 'src/features/form/data';
 import type { ILayoutCompCheckboxes } from 'src/layout/Checkboxes/types';
+import type { ILayoutCompFileUpload } from 'src/layout/FileUpload/types';
 import type { IGridStyling, ILayoutComponent } from 'src/layout/layout';
 import type { ILayoutCompRadioButtons } from 'src/layout/RadioButtons/types';
 import type { IAttachment, IAttachments } from 'src/shared/resources/attachments';
@@ -168,11 +170,36 @@ describe('formComponentUtils', () => {
 
   const mockRepeatingGroups: IRepeatingGroups = {};
 
+  describe('getFormDataForComponentInRepeatingGroup', () => {
+    it('should return comma separated string of text resources for checkboxes with multiple values', () => {
+      const checkboxComponent: ExprUnresolved<ILayoutCompCheckboxes> = {
+        id: 'whatever',
+        type: 'Checkboxes',
+        optionsId: 'mockRepOption',
+        dataModelBindings: {
+          simpleBinding: 'group.checkbox',
+        },
+      };
+      const result = getFormDataForComponentInRepeatingGroup(
+        mockFormData,
+        mockAttachments,
+        checkboxComponent,
+        0,
+        'group',
+        mockTextResources,
+        mockOptions,
+        mockRepeatingGroups,
+      );
+      expect(result).toEqual('RepValue1, RepValue2, RepValue3');
+    });
+  });
+
   describe('getDisplayFormData', () => {
     it('should return form data for a component', () => {
-      const inputComponent = {
+      const inputComponent: ExprUnresolved<ILayoutComponent> = {
+        id: 'whatever',
         type: 'Input',
-      } as ILayoutComponent;
+      };
       const result = getDisplayFormData(
         'mockBindingInput',
         inputComponent,
@@ -187,10 +214,11 @@ describe('formComponentUtils', () => {
     });
 
     it('should return comma separated string of text resources for checkboxes with multiple values', () => {
-      const checkboxComponent = {
+      const checkboxComponent: ExprUnresolved<ILayoutCompCheckboxes> = {
+        id: 'whatever',
         type: 'Checkboxes',
         optionsId: 'mockOption',
-      } as ILayoutCompCheckboxes;
+      };
       const result = getDisplayFormData(
         'mockBindingCheckbox',
         checkboxComponent,
@@ -205,11 +233,12 @@ describe('formComponentUtils', () => {
     });
 
     it('should return comma separated string of text resources for checkboxes with multiple values and mapping', () => {
-      const checkboxComponent = {
+      const checkboxComponent: ExprUnresolved<ILayoutCompCheckboxes> = {
+        id: 'whatever',
         type: 'Checkboxes',
         optionsId: 'mockOptionsWithMapping',
         mapping: { someDataField: 'someUrlParam' },
-      } as unknown as ILayoutCompCheckboxes;
+      };
       const result = getDisplayFormData(
         'mockBindingCheckboxWithMapping',
         checkboxComponent,
@@ -224,10 +253,11 @@ describe('formComponentUtils', () => {
     });
 
     it('should return object with text resources for checkboxes with multiple values when asObject parameter is true', () => {
-      const checkboxComponent = {
+      const checkboxComponent: ExprUnresolved<ILayoutCompCheckboxes> = {
+        id: 'whatever',
         type: 'Checkboxes',
         optionsId: 'mockOption',
-      } as ILayoutCompCheckboxes;
+      };
       const result = getDisplayFormData(
         'mockBindingCheckbox',
         checkboxComponent,
@@ -246,32 +276,37 @@ describe('formComponentUtils', () => {
       expect(result).toEqual(expected);
     });
 
-    it.each(['Likert', 'Dropdown', 'RadioButtons'])('should return text resource for %s component', (type) => {
-      const component = {
-        type,
-        optionsId: 'mockOption',
-      } as ILayoutComponent<'Likert'> | ILayoutComponent<'Dropdown'> | ILayoutComponent<'RadioButtons'>;
-      const result = getDisplayFormData(
-        `mockBinding${type}`,
-        component,
-        component.id,
-        mockAttachments,
-        mockFormData,
-        mockOptions,
-        mockTextResources,
-        mockRepeatingGroups,
-      );
-      expect(result).toEqual('Value1');
-    });
+    it.each(['Likert', 'Dropdown', 'RadioButtons'])(
+      'should return text resource for %s component',
+      (type: 'Likert' | 'Dropdown' | 'RadioButtons') => {
+        const component: ExprUnresolved<ILayoutComponent<typeof type>> = {
+          id: 'whatever',
+          type,
+          optionsId: 'mockOption',
+        };
+        const result = getDisplayFormData(
+          `mockBinding${type}`,
+          component,
+          component.id,
+          mockAttachments,
+          mockFormData,
+          mockOptions,
+          mockTextResources,
+          mockRepeatingGroups,
+        );
+        expect(result).toEqual('Value1');
+      },
+    );
 
     it.each(['Likert', 'Dropdown', 'RadioButtons'])(
       'should return text resource for %s component with mapping',
-      (type) => {
-        const component = {
+      (type: 'Likert' | 'Dropdown' | 'RadioButtons') => {
+        const component: ExprUnresolved<ILayoutComponent<typeof type>> = {
+          id: 'whatever',
           type,
           optionsId: 'mockOptionsWithMapping',
           mapping: { someDataField: 'someUrlParam' },
-        } as unknown as ILayoutComponent<'Likert'> | ILayoutComponent<'Dropdown'> | ILayoutComponent<'RadioButtons'>;
+        };
         const result = getDisplayFormData(
           `mockBinding${type}WithMapping`,
           component,
@@ -287,11 +322,11 @@ describe('formComponentUtils', () => {
     );
 
     it('should return text resource for radio button component', () => {
-      const radioButtonComponent = {
+      const radioButtonComponent: ExprUnresolved<ILayoutCompRadioButtons> = {
         type: 'RadioButtons',
         optionsId: 'mockOption',
         id: 'some-id',
-      } as ILayoutCompRadioButtons;
+      };
       const result = getDisplayFormData(
         'mockBindingRadioButtons',
         radioButtonComponent,
@@ -306,12 +341,12 @@ describe('formComponentUtils', () => {
     });
 
     it('should return text resource for radio button component with mapping', () => {
-      const radioButtonComponentWithMapping = {
+      const radioButtonComponentWithMapping: ExprUnresolved<ILayoutCompRadioButtons> = {
         type: 'RadioButtons',
         optionsId: 'mockOptionsWithMapping',
         mapping: { someDataField: 'someUrlParam' },
         id: 'some-id',
-      } as ILayoutCompRadioButtons;
+      };
       const result = getDisplayFormData(
         'mockBindingRadioButtonsWithMapping',
         radioButtonComponentWithMapping,
@@ -326,7 +361,7 @@ describe('formComponentUtils', () => {
     });
 
     it('should return correct label for dropdown setup with options from redux', () => {
-      const dropdownComponentWithReduxOptions = {
+      const dropdownComponentWithReduxOptions: ExprUnresolved<ILayoutCompRadioButtons> = {
         type: 'RadioButtons',
         id: 'some-id',
         source: {
@@ -334,7 +369,7 @@ describe('formComponentUtils', () => {
           label: 'dropdown.label',
           value: 'someGroup[{0}].fieldUsedAsValue',
         },
-      } as ILayoutCompRadioButtons;
+      };
 
       const repGroups: IRepeatingGroups = {
         group1: {
@@ -358,13 +393,17 @@ describe('formComponentUtils', () => {
     });
 
     it('should return a single attachment name for a FileUpload component', () => {
-      const component = {
+      const component: ExprUnresolved<ILayoutCompFileUpload> = {
         id: 'upload',
         type: 'FileUpload',
         dataModelBindings: {
           simpleBinding: 'mockBindingAttachmentSingle',
         },
-      } as ILayoutComponent;
+        minNumberOfAttachments: 1,
+        maxNumberOfAttachments: 2,
+        maxFileSizeInMB: 15,
+        displayMode: 'simple',
+      };
       const result = getDisplayFormData(
         component.dataModelBindings?.simpleBinding,
         component,
@@ -379,13 +418,17 @@ describe('formComponentUtils', () => {
     });
 
     it('should return multiple attachment names for a FileUpload component', () => {
-      const component = {
+      const component: ExprUnresolved<ILayoutCompFileUpload> = {
         id: 'upload',
         type: 'FileUpload',
         dataModelBindings: {
           list: 'mockBindingAttachmentMulti',
         },
-      } as ILayoutComponent;
+        minNumberOfAttachments: 1,
+        maxNumberOfAttachments: 2,
+        maxFileSizeInMB: 15,
+        displayMode: 'simple',
+      };
       const result = getDisplayFormData(
         component.dataModelBindings?.list,
         component,
@@ -397,29 +440,6 @@ describe('formComponentUtils', () => {
         mockRepeatingGroups,
       );
       expect(result).toEqual('mockNameAttachment3, mockNameAttachment2');
-    });
-  });
-
-  describe('getFormDataForComponentInRepeatingGroup', () => {
-    it('should return comma separated string of text resources for checkboxes with multiple values', () => {
-      const checkboxComponent = {
-        type: 'Checkboxes',
-        optionsId: 'mockRepOption',
-        dataModelBindings: {
-          simpleBinding: 'group.checkbox',
-        },
-      } as ILayoutCompCheckboxes;
-      const result = getFormDataForComponentInRepeatingGroup(
-        mockFormData,
-        mockAttachments,
-        checkboxComponent,
-        0,
-        'group',
-        mockTextResources,
-        mockOptions,
-        mockRepeatingGroups,
-      );
-      expect(result).toEqual('RepValue1, RepValue2, RepValue3');
     });
   });
 

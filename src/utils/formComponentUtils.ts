@@ -10,9 +10,11 @@ import { formatISOString } from 'src/utils/formatDate';
 import { setMappingForRepeatingGroupComponent } from 'src/utils/formLayout';
 import { getOptionLookupKey, getRelevantFormDataForOptionSource, setupSourceOptions } from 'src/utils/options';
 import { getTextFromAppOrDefault } from 'src/utils/textResource';
+import type { ExprResolved, ExprUnresolved } from 'src/features/expressions/types';
 import type { IFormData } from 'src/features/form/data';
 import type { ILayoutGroup } from 'src/layout/Group/types';
-import type { IDataModelBindings, IGridStyling, ILayoutComponent } from 'src/layout/layout';
+import type { IDataModelBindings, IGridStyling, ILayoutComponent, NumberFormatProps } from 'src/layout/layout';
+import type { IPageBreak } from 'src/layout/layout.d';
 import type { IAttachment, IAttachments } from 'src/shared/resources/attachments';
 import type {
   IComponentValidations,
@@ -71,7 +73,7 @@ export const getFormDataForComponent = (formData: IFormData, dataModelBindings: 
 export const getDisplayFormDataForComponent = (
   formData: IFormData,
   attachments: IAttachments,
-  component: ILayoutComponent,
+  component: ExprUnresolved<ILayoutComponent> | AnyItem,
   textResources: ITextResource[],
   options: IOptions,
   repeatingGroups: IRepeatingGroups | null,
@@ -119,7 +121,7 @@ export const getDisplayFormDataForComponent = (
 
 export const getDisplayFormData = (
   dataModelBinding: string | undefined,
-  component: ILayoutComponent | ILayoutGroup,
+  component: ExprUnresolved<ILayoutComponent | ILayoutGroup> | AnyItem,
   componentId: string,
   attachments: IAttachments,
   formData: any,
@@ -240,7 +242,7 @@ export const getDisplayFormData = (
       return attachmentNamesList.join(', ');
     }
     if (component.type === 'Input' && component.formatting?.number) {
-      return formatNumericText(formDataValue, component.formatting.number);
+      return formatNumericText(formDataValue, component.formatting.number as NumberFormatProps);
     }
     if (component.type === 'Datepicker') {
       const dateFormat = getDateFormat(component.format);
@@ -250,10 +252,13 @@ export const getDisplayFormData = (
   return formDataValue;
 };
 
+/**
+ * @deprecated
+ */
 export const getFormDataForComponentInRepeatingGroup = (
   formData: IFormData,
   attachments: IAttachments,
-  component: ILayoutComponent | ILayoutGroup,
+  component: ExprUnresolved<ILayoutComponent | ILayoutGroup>,
   index: number,
   groupDataModelBinding: string | undefined,
   textResources: ITextResource[],
@@ -543,17 +548,17 @@ export const gridBreakpoints = (grid?: IGridStyling) => {
   };
 };
 
-export const pageBreakStyles = (component: AnyItem<'resolved'> | undefined) => {
-  if (!component?.pageBreak) {
+export const pageBreakStyles = (pageBreak: ExprResolved<IPageBreak> | undefined) => {
+  if (!pageBreak) {
     return {};
   }
 
   return {
-    [printStyles['break-before-auto']]: component.pageBreak.breakBefore === 'auto',
-    [printStyles['break-before-always']]: component.pageBreak.breakBefore === 'always',
-    [printStyles['break-before-avoid']]: component.pageBreak.breakBefore === 'avoid',
-    [printStyles['break-after-auto']]: component.pageBreak.breakAfter === 'auto',
-    [printStyles['break-after-always']]: component.pageBreak.breakAfter === 'always',
-    [printStyles['break-after-avoid']]: component.pageBreak.breakAfter === 'avoid',
+    [printStyles['break-before-auto']]: pageBreak.breakBefore === 'auto',
+    [printStyles['break-before-always']]: pageBreak.breakBefore === 'always',
+    [printStyles['break-before-avoid']]: pageBreak.breakBefore === 'avoid',
+    [printStyles['break-after-auto']]: pageBreak.breakAfter === 'auto',
+    [printStyles['break-after-always']]: pageBreak.breakAfter === 'always',
+    [printStyles['break-after-avoid']]: pageBreak.breakAfter === 'avoid',
   };
 };

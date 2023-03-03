@@ -11,10 +11,10 @@ import { getLanguageFromKey, getTextResourceByKey } from 'src/language/sharedLan
 import { AltinnAppTheme } from 'src/theme/altinnAppTheme';
 import { getFormDataForComponentInRepeatingGroup, getTextResource } from 'src/utils/formComponentUtils';
 import { useResolvedNode } from 'src/utils/layout/ExprContext';
-import type { ExprResolved } from 'src/features/expressions/types';
+import type { ExprResolved, ExprUnresolved } from 'src/features/expressions/types';
 import type { IFormData } from 'src/features/form/data';
 import type { ILayoutGroup } from 'src/layout/Group/types';
-import type { ComponentExceptGroup, ILayoutComponent } from 'src/layout/layout';
+import type { ILayoutComponent } from 'src/layout/layout';
 import type { IAttachments } from 'src/shared/resources/attachments';
 import type { IOptions, IRepeatingGroups, ITextResource, ITextResourceBindings } from 'src/types';
 import type { ILanguage } from 'src/types/shared';
@@ -22,8 +22,8 @@ import type { ILanguage } from 'src/types/shared';
 export interface IRepeatingGroupTableRowProps {
   id: string;
   className?: string;
-  container: ILayoutGroup;
-  components: (ILayoutComponent | ILayoutGroup)[];
+  container: ExprUnresolved<ILayoutGroup>;
+  components: ExprUnresolved<ILayoutComponent | ILayoutGroup>[];
   repeatingGroups: IRepeatingGroups | null;
   formData: IFormData;
   attachments: IAttachments;
@@ -36,7 +36,7 @@ export interface IRepeatingGroupTableRowProps {
   deleting: boolean;
   index: number;
   rowHasErrors: boolean;
-  tableComponents: ILayoutComponent<ComponentExceptGroup>[];
+  tableComponents: ExprUnresolved<ILayoutComponent>[];
   onEditClick: () => void;
   mobileView: boolean;
   deleteFunctionality?: {
@@ -114,7 +114,9 @@ function getEditButtonText(
     : getLanguageFromKey('general.edit_alt', language);
 }
 
-export function getTextAlignment(component: ILayoutComponent): 'left' | 'center' | 'right' {
+function getTextAlignment(
+  component: ExprUnresolved<ILayoutComponent> | ExprResolved<ILayoutComponent>,
+): 'left' | 'center' | 'right' {
   if (component.type !== 'Input') {
     return 'left';
   }
@@ -167,7 +169,10 @@ export function RepeatingGroupTableRow({
     ...expressionsForRow?.textResourceBindings,
   } as ExprResolved<ILayoutGroup['textResourceBindings']>;
 
-  const getFormDataForComponent = (component: ILayoutComponent | ILayoutGroup, index: number): string => {
+  const getFormDataForComponent = (
+    component: ExprUnresolved<ILayoutComponent | ILayoutGroup>,
+    index: number,
+  ): string => {
     return getFormDataForComponentInRepeatingGroup(
       formData,
       attachments,
@@ -203,7 +208,7 @@ export function RepeatingGroupTableRow({
       )}
     >
       {!mobileView ? (
-        tableComponents.map((component: ILayoutComponent) => (
+        tableComponents.map((component) => (
           <TableCell
             key={`${component.id}-${index}`}
             style={{ textAlign: getTextAlignment(component) }}

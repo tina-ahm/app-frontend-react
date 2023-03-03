@@ -1,7 +1,8 @@
-import { put, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 import type { SagaIterator } from 'redux-saga';
 
 import { FormDataActions } from 'src/features/form/data/formDataSlice';
+import { checkIfConditionalRulesShouldRunSaga } from 'src/features/form/dynamics/conditionalRendering/conditionalRenderingSagas';
 import {
   fetchLayoutSetsSaga,
   watchFetchFormLayoutSaga,
@@ -341,6 +342,14 @@ export const formLayoutSlice = createSagaSlice((mkAction: MkActionType<ILayoutSt
     clearKeepScrollPos: mkAction<void>({
       reducer: (state) => {
         state.uiConfig.keepScrollPos = undefined;
+      },
+    }),
+    updateLayouts: mkAction<ILayouts>({
+      takeEvery: function* () {
+        yield call(checkIfConditionalRulesShouldRunSaga, { payload: {}, type: '' });
+      },
+      reducer: (state, action) => {
+        state.layouts = { ...state.layouts, ...action.payload };
       },
     }),
   },

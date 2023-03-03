@@ -23,11 +23,11 @@ import {
 } from 'src/utils/formComponentUtils';
 import { useResolvedNode } from 'src/utils/layout/ExprContext';
 import { getTextFromAppOrDefault } from 'src/utils/textResource';
-import type { ComponentExceptGroupAndSummary, ILayoutComponent, RenderableGenericComponent } from 'src/layout/layout';
+import type { ExprUnresolved } from 'src/features/expressions/types';
 import type { ILayoutCompSummary } from 'src/layout/Summary/types';
 import type { IComponentValidations, IRuntimeState } from 'src/types';
 
-export interface ISummaryComponent extends Omit<ILayoutCompSummary, 'type'> {
+export interface ISummaryComponent extends Omit<ExprUnresolved<ILayoutCompSummary>, 'type'> {
   formData?: any;
 }
 
@@ -79,7 +79,7 @@ export function SummaryComponent(_props: ISummaryComponent) {
   const attachments = useAppSelector((state: IRuntimeState) => state.attachments.attachments);
   const formComponent = useResolvedNode(componentRef)?.item;
   const summaryComponent = useResolvedNode(id)?.item;
-  const layoutComponent = getLayoutComponentObject(formComponent?.type as ComponentExceptGroupAndSummary);
+  const layoutComponent = getLayoutComponentObject(formComponent?.type);
   const formComponentLegacy = useAppSelector(
     (state) =>
       (state.formLayout.layouts &&
@@ -121,7 +121,7 @@ export function SummaryComponent(_props: ISummaryComponent) {
       getDisplayFormDataForComponent(
         state.formData.formData,
         attachments,
-        formComponent as ILayoutComponent,
+        formComponent,
         state.textResources.resources,
         state.optionState.options,
         state.formLayout.uiConfig.repeatingGroups,
@@ -163,7 +163,7 @@ export function SummaryComponent(_props: ISummaryComponent) {
     }
   }, [formValidations, layout, pageRef, formComponent, componentRef]);
 
-  if (hidden || !formComponent || !formComponentLegacy) {
+  if (hidden || !formComponent || !formComponentLegacy || formComponent.type === 'Summary') {
     return null;
   }
 
@@ -192,9 +192,9 @@ export function SummaryComponent(_props: ISummaryComponent) {
         )}
       />
     );
-  } else if (layoutComponent?.getComponentType() === ComponentType.Presentation) {
+  } else if (layoutComponent?.getComponentType() === ComponentType.Presentation && formComponent?.type !== 'Group') {
     // Render non-input components as normal
-    return <GenericComponent {...(formComponentLegacy as RenderableGenericComponent)} />;
+    return <GenericComponent {...formComponent} />;
   }
 
   const displayGrid = display && display.useComponentGrid ? formComponent?.grid : grid;
@@ -207,7 +207,7 @@ export function SummaryComponent(_props: ISummaryComponent) {
       lg={displayGrid?.lg || false}
       xl={displayGrid?.xl || false}
       data-testid={`summary-${id}`}
-      className={cn(pageBreakStyles(summaryComponent ?? formComponent))}
+      className={cn(pageBreakStyles(summaryComponent?.pageBreak ?? formComponent?.pageBreak))}
     >
       <Grid
         container={true}
@@ -218,7 +218,7 @@ export function SummaryComponent(_props: ISummaryComponent) {
         <SummaryComponentSwitch
           id={id}
           change={change}
-          formComponent={formComponentLegacy}
+          formComponent={formComponent}
           label={label}
           hasValidationMessages={hasValidationMessages}
           formData={calculatedFormData}
