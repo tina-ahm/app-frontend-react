@@ -7,6 +7,19 @@ export interface IGroupFilter {
   value: string;
 }
 
+export interface ITableColumns {
+  [key: string]: ITableColumnProperties;
+}
+
+export interface ITableColumnProperties {
+  width?: string | 'shrink' | 'grow';
+  alignText?: 'left' | 'center' | 'right';
+  textOverflow?: {
+    lineWrap?: boolean;
+    maxHeight?: number;
+  };
+}
+
 export interface IGroupEditProperties {
   mode?: 'hideTable' | 'showTable' | 'showAll' | 'likert';
   filter?: IGroupFilter[];
@@ -23,6 +36,7 @@ export interface ILayoutGroup extends ILayoutCompBase<'Group'> {
   children: string[];
   maxCount?: number;
   tableHeaders?: string[];
+  tableColumns?: ITableColumns;
   edit?: IGroupEditProperties;
   panel?: IGroupPanel;
 }

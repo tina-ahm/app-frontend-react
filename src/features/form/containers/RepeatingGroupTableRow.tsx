@@ -91,6 +91,7 @@ export function RepeatingGroupTableRow({
   const group = node?.item.type === 'Group' && 'rows' in node.item ? node.item : undefined;
   const row = group?.rows[index] ? group.rows[index] : undefined;
   const expressionsForRow = row && row.groupExpressions;
+  const columnSettings = group?.tableColumns;
   const edit = {
     ...group?.edit,
     ...expressionsForRow?.edit,
