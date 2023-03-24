@@ -70,13 +70,23 @@
 }
 
 .contentFormatting {
+  --cell-max-number-of-lines: 2;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
   word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--cell-max-number-of-lines);
+  line-clamp: var(--cell-max-number-of-lines);
+}
+
+.tableCellFormatting {
+  --cell-width: auto;
+  --cell-text-alignment: left;
+  width: var(--cell-width);
+  /* using !important here because this class is not overriding styles in a class set in the designsystem
+  even though this given class is specified after the designsystems internal class. */
+  text-align: var(--cell-text-alignment) !important;
 }
 
 .popoverCurrentCell {

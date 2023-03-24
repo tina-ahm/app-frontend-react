@@ -10,8 +10,9 @@ import { RepeatingGroupsEditContainer } from 'src/features/form/containers/Repea
 import { RepeatingGroupTableRow } from 'src/features/form/containers/RepeatingGroupTableRow';
 import { getLanguageFromKey } from 'src/language/sharedLanguage';
 import { ComponentType } from 'src/layout';
-import { getTextAlignment, getTextResource } from 'src/utils/formComponentUtils';
+import { getColumnStyles, getTextResource } from 'src/utils/formComponentUtils';
 import { useResolvedNode } from 'src/utils/layout/ExprContext';
+import type { ITableColumnFormatting } from 'src/layout/layout';
 import type { ITextResourceBindings } from 'src/types';
 
 export interface IRepeatingGroupTableProps {
@@ -54,6 +55,7 @@ export function RepeatingGroupTable({
   const node = useResolvedNode(id);
   const container = node?.item.type === 'Group' && 'rows' in node.item ? node.item : undefined;
   const edit = container?.edit;
+  const columnSettings = container?.tableColumns as ITableColumnFormatting;
 
   const getTableNodes = (rowIndex: number) =>
     node?.children(undefined, rowIndex).filter((child) => {
@@ -154,8 +156,9 @@ export function RepeatingGroupTable({
             <TableRow>
               {tableNodes?.map((n) => (
                 <TableCell
-                  style={{ textAlign: getTextAlignment(n.item) }}
                   key={n.item.id}
+                  className={classes.tableCellFormatting}
+                  style={getColumnStyles(n.item, columnSettings)}
                 >
                   <span className={classes.contentFormatting}>
                     {getTextResource(getTableTitle(n.item.textResourceBindings || {}), textResources)}

@@ -8,14 +8,17 @@ import { ConditionalWrapper } from 'src/components/ConditionalWrapper';
 import { FullWidthWrapper } from 'src/features/form/components/FullWidthWrapper';
 import { GenericComponent } from 'src/layout/GenericComponent';
 import css from 'src/layout/Grid/Grid.module.css';
+import { getColumnStylesGrid } from 'src/utils/formComponentUtils';
 import { useResolvedNode } from 'src/utils/layout/ExprContext';
 import { LayoutPage } from 'src/utils/layout/hierarchy';
 import type { PropsFromGenericComponent } from 'src/layout';
 import type { GridRow } from 'src/layout/Grid/types';
+import type { ITableColumnFormatting, ITableColumnProperties } from 'src/layout/layout';
 
 export function GridComponent({ node }: PropsFromGenericComponent<'Grid'>) {
   const { rows } = node.item;
   const shouldHaveFullWidth = node.parent instanceof LayoutPage;
+  const columnSettings: ITableColumnFormatting = {};
 
   return (
     <ConditionalWrapper
@@ -37,11 +40,17 @@ export function GridComponent({ node }: PropsFromGenericComponent<'Grid'>) {
                 [css.fullWidthCellLast]: isLast,
               });
 
+              if (row.header && cell && 'columnOptions' in cell && cell.columnOptions) {
+                columnSettings[cellIdx] = cell.columnOptions;
+                console.log(columnSettings);
+              }
+
               if (cell && 'text' in cell) {
                 return (
                   <CellWithText
                     key={cell.text}
                     className={className}
+                    columnStyleOptions={columnSettings[cellIdx]}
                   >
                     {cell.text}
                   </CellWithText>
@@ -54,6 +63,7 @@ export function GridComponent({ node }: PropsFromGenericComponent<'Grid'>) {
                   key={componentId || `${rowIdx}-${cellIdx}`}
                   id={componentId}
                   className={className}
+                  columnStyleOptions={columnSettings[cellIdx]}
                 />
               );
             })}
@@ -87,17 +97,22 @@ function Row({ header, readOnly, children }: RowProps) {
 
 interface CellProps {
   className?: string;
+  columnStyleOptions?: ITableColumnProperties;
 }
 
 interface CellWithComponentProps extends CellProps {
   id?: string;
 }
 
-function CellWithComponent({ id, className }: CellWithComponentProps) {
+function CellWithComponent({ id, className, columnStyleOptions }: CellWithComponentProps) {
   const node = useResolvedNode(id);
   if (node && !node.isHidden()) {
+    const columnStyles = columnStyleOptions && getColumnStylesGrid(columnStyleOptions);
     return (
-      <TableCell className={className}>
+      <TableCell
+        className={cn(css.tableCellFormatting, className)}
+        style={columnStyles}
+      >
         <GenericComponent
           node={node}
           overrideDisplay={{
@@ -115,6 +130,19 @@ function CellWithComponent({ id, className }: CellWithComponentProps) {
 
 type CellWithTextProps = CellProps & PropsWithChildren;
 
-function CellWithText({ children, className }: CellWithTextProps) {
-  return <TableCell className={className}>{children}</TableCell>;
+function CellWithText({ children, className, columnStyleOptions }: CellWithTextProps) {
+  const columnStyles = columnStyleOptions && getColumnStylesGrid(columnStyleOptions);
+  return (
+    <TableCell
+      className={cn(css.tableCellFormatting, className)}
+      style={columnStyles}
+    >
+      <span
+        className={css.contentFormatting}
+        style={columnStyles}
+      >
+        {children}
+      </span>
+    </TableCell>
+  );
 }

@@ -1,5 +1,5 @@
 import type { ExprResolved } from 'src/features/expressions/types';
-import type { ILayoutCompBase, ILayoutComponent } from 'src/layout/layout';
+import type { ILayoutCompBase, ILayoutComponent, ITableColumnProperties } from 'src/layout/layout';
 import type { LayoutNode } from 'src/utils/layout/hierarchy';
 import type { AnyItem } from 'src/utils/layout/hierarchy.types';
 
@@ -10,10 +10,12 @@ export interface GridCellOptions {
 
 export interface GridComponentRef extends GridCellOptions {
   component: string;
+  columnOptions?: ITableColumnProperties;
 }
 
 export interface GridText extends GridCellOptions {
   text: string; // TODO: Support expressions here
+  columnOptions?: ITableColumnProperties;
 }
 
 export type GridCell<C = GridComponentRef> = C | GridText | null;

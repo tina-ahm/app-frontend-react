@@ -5,9 +5,27 @@
 }
 
 .fullWidthCellFirst {
-  padding-left: var(--modal-padding-x);
+  padding-left: var(--modal-padding-x) !important;
 }
 
 .fullWidthCellLast {
-  padding-right: var(--modal-padding-x);
+  padding-right: var(--modal-padding-x) !important;
+}
+
+.contentFormatting {
+  --cell-max-number-of-lines: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--cell-max-number-of-lines);
+  line-clamp: var(--cell-max-number-of-lines);
+}
+
+.tableCellFormatting {
+  --cell-width: max-content;
+  --cell-text-alignment: left;
+  width: var(--cell-width);
+  text-align: var(--cell-text-alignment) !important;
 }

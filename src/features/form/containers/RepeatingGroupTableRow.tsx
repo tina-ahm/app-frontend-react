@@ -11,10 +11,11 @@ import { DeleteWarningPopover } from 'src/components/molecules/DeleteWarningPopo
 import classes from 'src/features/form/containers/RepeatingGroup.module.css';
 import { getLanguageFromKey, getTextResourceByKey } from 'src/language/sharedLanguage';
 import { FormComponent } from 'src/layout/LayoutComponent';
-import { getTextAlignment, getTextResource } from 'src/utils/formComponentUtils';
+import { getColumnStyles, getTextResource } from 'src/utils/formComponentUtils';
 import { useResolvedNode } from 'src/utils/layout/ExprContext';
 import type { ExprResolved } from 'src/features/expressions/types';
 import type { ILayoutGroup } from 'src/layout/Group/types';
+import type { ITableColumnFormatting } from 'src/layout/layout';
 import type { ITextResource, ITextResourceBindings } from 'src/types';
 import type { ILanguage } from 'src/types/shared';
 import type { LayoutNode } from 'src/utils/layout/hierarchy';
@@ -91,6 +92,7 @@ export function RepeatingGroupTableRow({
   const group = node?.item.type === 'Group' && 'rows' in node.item ? node.item : undefined;
   const row = group?.rows[index] ? group.rows[index] : undefined;
   const expressionsForRow = row && row.groupExpressions;
+  const columnSettings = group?.tableColumns as ITableColumnFormatting;
   const edit = {
     ...group?.edit,
     ...expressionsForRow?.edit,
@@ -133,9 +135,15 @@ export function RepeatingGroupTableRow({
         tableNodes.map((n, idx) => (
           <TableCell
             key={`${n.item.id}-${index}`}
-            style={{ textAlign: getTextAlignment(n.item) }}
+            className={classes.tableCellFormatting}
+            style={getColumnStyles(n.item, columnSettings)}
           >
-            <span className={classes.contentFormatting}>{isEditingRow ? null : displayData[idx]}</span>
+            <span
+              className={classes.contentFormatting}
+              style={getColumnStyles(n.item, columnSettings)}
+            >
+              {isEditingRow ? null : displayData[idx]}
+            </span>
           </TableCell>
         ))
       ) : (
