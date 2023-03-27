@@ -864,7 +864,7 @@ function resolvedNodesInLayouts(
 ) {
   // A full copy is needed here because formLayout comes from the redux store, and in production code (not the
   // development server!) the properties are not mutable (but we have to mutate them below).
-  const layoutsCopy: ILayouts = structuredClone(layouts || {});
+  const layoutsCopy: ILayouts = layouts ? structuredClone(layouts) : {};
   const unresolved = nodesInLayouts(layoutsCopy, currentLayout, repeatingGroups, dataSources);
 
   const config = {
