@@ -48,7 +48,6 @@ export const CheckboxContainerComponent = ({
   const optionsHasChanged = useHasChangedIgnoreUndefined(apiOptions);
   const lookupKey = optionsId && getOptionLookupKey({ id: optionsId, mapping });
   const fetchingOptions = useAppSelector((state) => lookupKey && state.optionState.options[lookupKey]?.loading);
-  const hideText = overrideDisplay?.renderCheckboxRadioLabelsWhenOnlyOne === false && calculatedOptions.length === 1;
 
   const { value, setValue, saveValue } = useDelayedSavedState(handleDataChange, formData?.simpleBinding ?? '', 200);
 
@@ -117,10 +116,8 @@ export const CheckboxContainerComponent = ({
         compact={false}
         disabled={readOnly}
         onChange={(values) => handleChange(values)}
-        legend={hideText ? undefined : labelText}
-        description={
-          hideText ? undefined : textResourceBindings?.description && getTextResource(textResourceBindings.description)
-        }
+        legend={overrideDisplay?.renderLegend ? labelText : null}
+        description={textResourceBindings?.description && getTextResource(textResourceBindings.description)}
         error={!isValid}
         helpText={textResourceBindings?.help && getTextResource(textResourceBindings.help)}
         variant={
@@ -135,7 +132,10 @@ export const CheckboxContainerComponent = ({
           name: option.value,
           checkboxId: `${id}-${option.label.replace(/\s/g, '-')}`,
           checked: selected.includes(option.value),
-          label: hideText ? undefined : getTextResource(option.label),
+          label:
+            overrideDisplay?.renderCheckboxRadioLabelsWhenOnlyOne === false && calculatedOptions.length === 1
+              ? null
+              : getTextResource(option.label),
           helpText: option.helpText && getTextResource(option.helpText),
         }))}
       />

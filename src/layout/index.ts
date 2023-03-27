@@ -96,11 +96,11 @@ export interface IComponentProps {
   language: ILanguage;
   shouldFocus: boolean;
   text: React.ReactNode | string;
-  label: () => JSX.Element | null;
-  legend: () => JSX.Element | null;
   texts?: {
     [textResourceKey: string]: React.ReactNode;
   };
+  label: () => JSX.Element | null;
+  legend: () => JSX.Element | null;
   formData: IComponentFormData;
   isValid?: boolean;
   componentValidations?: IComponentValidations;
