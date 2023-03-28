@@ -11,7 +11,7 @@ import { DeleteWarningPopover } from 'src/components/molecules/DeleteWarningPopo
 import classes from 'src/features/form/containers/RepeatingGroup.module.css';
 import { getLanguageFromKey, getTextResourceByKey } from 'src/language/sharedLanguage';
 import { FormComponent } from 'src/layout/LayoutComponent';
-import { getColumnStyles, getTextResource } from 'src/utils/formComponentUtils';
+import { getColumnStylesRepeatingGroups, getTextResource } from 'src/utils/formComponentUtils';
 import { useResolvedNode } from 'src/utils/layout/ExprContext';
 import type { ExprResolved } from 'src/features/expressions/types';
 import type { ILayoutGroup } from 'src/layout/Group/types';
@@ -136,11 +136,11 @@ export function RepeatingGroupTableRow({
           <TableCell
             key={`${n.item.id}-${index}`}
             className={classes.tableCellFormatting}
-            style={getColumnStyles(n.item, columnSettings)}
+            style={getColumnStylesRepeatingGroups(n.item, columnSettings)}
           >
             <span
               className={classes.contentFormatting}
-              style={getColumnStyles(n.item, columnSettings)}
+              style={getColumnStylesRepeatingGroups(n.item, columnSettings)}
             >
               {isEditingRow ? null : displayData[idx]}
             </span>

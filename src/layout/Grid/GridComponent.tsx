@@ -8,7 +8,7 @@ import { ConditionalWrapper } from 'src/components/ConditionalWrapper';
 import { FullWidthWrapper } from 'src/features/form/components/FullWidthWrapper';
 import { GenericComponent } from 'src/layout/GenericComponent';
 import css from 'src/layout/Grid/Grid.module.css';
-import { getColumnStylesGrid } from 'src/utils/formComponentUtils';
+import { getColumnStyles } from 'src/utils/formComponentUtils';
 import { useResolvedNode } from 'src/utils/layout/ExprContext';
 import { LayoutPage } from 'src/utils/layout/hierarchy';
 import type { PropsFromGenericComponent } from 'src/layout';
@@ -42,10 +42,15 @@ export function GridComponent({ node }: PropsFromGenericComponent<'Grid'>) {
 
               if (row.header && cell && 'columnOptions' in cell && cell.columnOptions) {
                 columnSettings[cellIdx] = cell.columnOptions;
-                console.log(columnSettings);
               }
 
               if (cell && 'text' in cell) {
+                if (cell?.alignText) {
+                  columnSettings[cellIdx].alignText = cell?.alignText;
+                }
+                if (cell?.textOverflow) {
+                  columnSettings[cellIdx].textOverflow = cell?.textOverflow;
+                }
                 return (
                   <CellWithText
                     key={cell.text}
@@ -107,7 +112,7 @@ interface CellWithComponentProps extends CellProps {
 function CellWithComponent({ id, className, columnStyleOptions }: CellWithComponentProps) {
   const node = useResolvedNode(id);
   if (node && !node.isHidden()) {
-    const columnStyles = columnStyleOptions && getColumnStylesGrid(columnStyleOptions);
+    const columnStyles = columnStyleOptions && getColumnStyles(columnStyleOptions);
     return (
       <TableCell
         className={cn(css.tableCellFormatting, className)}
@@ -131,7 +136,7 @@ function CellWithComponent({ id, className, columnStyleOptions }: CellWithCompon
 type CellWithTextProps = CellProps & PropsWithChildren;
 
 function CellWithText({ children, className, columnStyleOptions }: CellWithTextProps) {
-  const columnStyles = columnStyleOptions && getColumnStylesGrid(columnStyleOptions);
+  const columnStyles = columnStyleOptions && getColumnStyles(columnStyleOptions);
   return (
     <TableCell
       className={cn(css.tableCellFormatting, className)}

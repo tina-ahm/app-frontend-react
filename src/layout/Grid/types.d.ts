@@ -6,16 +6,20 @@ import type { AnyItem } from 'src/utils/layout/hierarchy.types';
 export interface GridCellOptions {
   header?: boolean; // TODO: Support expressions here?
   readOnly?: boolean; // TODO: Support expressions here?
+  columnOptions?: ITableColumnProperties;
 }
 
 export interface GridComponentRef extends GridCellOptions {
   component: string;
-  columnOptions?: ITableColumnProperties;
 }
 
 export interface GridText extends GridCellOptions {
   text: string; // TODO: Support expressions here
-  columnOptions?: ITableColumnProperties;
+  alignText?: 'left' | 'center' | 'right';
+  textOverflow?: {
+    lineWrap?: boolean;
+    maxHeight?: number;
+  };
 }
 
 export type GridCell<C = GridComponentRef> = C | GridText | null;

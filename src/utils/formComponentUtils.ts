@@ -260,26 +260,19 @@ export function getTextAlignment(component: AnyItem): 'left' | 'center' | 'right
   return 'left';
 }
 
-export function getColumnStyles(tableHeader, columnSettings?: ITableColumnFormatting) {
+export function getColumnStylesRepeatingGroups(tableHeader, columnSettings?: ITableColumnFormatting) {
   const column = columnSettings && columnSettings[tableHeader.baseComponentId];
   if (!column) {
     return;
   }
 
   const textAlignment = column.alignText ?? getTextAlignment(tableHeader);
+  column.alignText = textAlignment;
 
-  const lineClampToggle = !column.textOverflow?.lineWrap ? 0 : 1;
-
-  const columnStyleVariables = {
-    '--cell-max-number-of-lines': (column.textOverflow?.maxHeight ?? 2) * lineClampToggle,
-    '--cell-text-alignment': textAlignment,
-    '--cell-width': column.width,
-  };
-
-  return columnStyleVariables as React.CSSProperties;
+  return getColumnStyles(column);
 }
 
-export function getColumnStylesGrid(columnSettings: ITableColumnProperties) {
+export function getColumnStyles(columnSettings: ITableColumnProperties) {
   const lineClampToggle = !columnSettings.textOverflow?.lineWrap ? 0 : 1;
 
   const columnStyleVariables = {

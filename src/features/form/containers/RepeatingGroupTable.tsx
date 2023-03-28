@@ -10,7 +10,7 @@ import { RepeatingGroupsEditContainer } from 'src/features/form/containers/Repea
 import { RepeatingGroupTableRow } from 'src/features/form/containers/RepeatingGroupTableRow';
 import { getLanguageFromKey } from 'src/language/sharedLanguage';
 import { ComponentType } from 'src/layout';
-import { getColumnStyles, getTextResource } from 'src/utils/formComponentUtils';
+import { getColumnStylesRepeatingGroups, getTextResource } from 'src/utils/formComponentUtils';
 import { useResolvedNode } from 'src/utils/layout/ExprContext';
 import type { ITableColumnFormatting } from 'src/layout/layout';
 import type { ITextResourceBindings } from 'src/types';
@@ -158,9 +158,12 @@ export function RepeatingGroupTable({
                 <TableCell
                   key={n.item.id}
                   className={classes.tableCellFormatting}
-                  style={getColumnStyles(n.item, columnSettings)}
+                  style={getColumnStylesRepeatingGroups(n.item, columnSettings)}
                 >
-                  <span className={classes.contentFormatting}>
+                  <span
+                    className={classes.contentFormatting}
+                    style={getColumnStylesRepeatingGroups(n.item, columnSettings)}
+                  >
                     {getTextResource(getTableTitle(n.item.textResourceBindings || {}), textResources)}
                   </span>
                 </TableCell>

@@ -13,6 +13,7 @@
 }
 
 .contentFormatting {
+  --cell-text-alignment: left;
   --cell-max-number-of-lines: 2;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -21,11 +22,10 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: var(--cell-max-number-of-lines);
   line-clamp: var(--cell-max-number-of-lines);
+  text-align: var(--cell-text-alignment) !important;
 }
 
 .tableCellFormatting {
-  --cell-width: max-content;
-  --cell-text-alignment: left;
+  --cell-width: auto;
   width: var(--cell-width);
-  text-align: var(--cell-text-alignment) !important;
 }
