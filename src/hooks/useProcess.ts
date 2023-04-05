@@ -1,9 +1,10 @@
-import React from 'react';
+import { useEffect } from 'react';
 
 import { IsLoadingActions } from 'src/features/isLoading/isLoadingSlice';
 import { ProcessActions } from 'src/features/process/processSlice';
 import { QueueActions } from 'src/features/queue/queueSlice';
 import { useAppDispatch } from 'src/hooks/useAppDispatch';
+import { useApplicationMetadata } from 'src/hooks/useApplicationMetadata';
 import { useAppSelector } from 'src/hooks/useAppSelector';
 import { selectAppName, selectAppOwner } from 'src/selectors/language';
 import { ProcessTaskType } from 'src/types';
@@ -13,14 +14,14 @@ export function useProcess() {
   const dispatch = useAppDispatch();
 
   const instanceData = useAppSelector((state) => state.instanceData.instance);
-  const applicationMetadata = useAppSelector((state) => state.applicationMetadata.applicationMetadata);
+  const { data: applicationMetadata } = useApplicationMetadata();
   const process = useAppSelector((state) => state.process);
   const layoutSets = useAppSelector((state) => state.formLayout.layoutsets);
 
   const taskType = process?.taskType;
   const taskId = process?.taskId;
 
-  React.useEffect(() => {
+  useEffect((): void => {
     if (!applicationMetadata || !instanceData) {
       return;
     }
@@ -35,17 +36,12 @@ export function useProcess() {
       return;
     }
 
-    switch (taskType) {
-      case ProcessTaskType.Confirm:
-      case ProcessTaskType.Feedback:
-        dispatch(QueueActions.startInitialInfoTaskQueue());
-        break;
-      case ProcessTaskType.Archived: {
-        dispatch(IsLoadingActions.finishDataTaskIsLoading());
-        break;
-      }
-      default:
-        break;
+    if ([ProcessTaskType.Confirm, ProcessTaskType.Feedback].includes(taskType)) {
+      dispatch(QueueActions.startInitialInfoTaskQueue());
+    }
+
+    if ([ProcessTaskType.Archived].includes(taskType)) {
+      dispatch(IsLoadingActions.finishDataTaskIsLoading());
     }
   }, [taskType, taskId, applicationMetadata, instanceData, dispatch, layoutSets]);
 

@@ -8,10 +8,13 @@ import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 
 import { AppWrapper } from '@altinn/altinn-design-system';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { App } from 'src/App';
 import { ErrorBoundary } from 'src/components/ErrorBoundary';
 import { ThemeWrapper } from 'src/components/ThemeWrapper';
+import { AppServicesContextProvider } from 'src/contexts/appServiceContext';
+import * as queries from 'src/queries/queries';
 import { initSagas } from 'src/redux/sagas';
 import { setupStore } from 'src/redux/store';
 import { ExprContextWrapper } from 'src/utils/layout/ExprContext';
@@ -22,6 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const { store, sagaMiddleware } = setupStore();
   initSagas(sagaMiddleware);
 
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: 10 * 60 * 1000,
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
+
   const container = document.getElementById('root');
   const root = container && createRoot(container);
   root?.render(
@@ -30,9 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
         <AppWrapper>
           <ThemeWrapper>
             <ErrorBoundary>
-              <ExprContextWrapper>
-                <App />
-              </ExprContextWrapper>
+              <QueryClientProvider client={queryClient}>
+                <AppServicesContextProvider {...queries}>
+                  <ExprContextWrapper>
+                    <App />
+                  </ExprContextWrapper>
+                </AppServicesContextProvider>
+              </QueryClientProvider>
             </ErrorBoundary>
           </ThemeWrapper>
         </AppWrapper>

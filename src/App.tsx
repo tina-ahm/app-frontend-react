@@ -8,26 +8,69 @@ import { UnknownError } from 'src/features/instantiate/containers/UnknownError';
 import { PdfActions } from 'src/features/pdf/data/pdfSlice';
 import { QueueActions } from 'src/features/queue/queueSlice';
 import { useAppDispatch } from 'src/hooks/useAppDispatch';
+import { useApplicationMetadata } from 'src/hooks/useApplicationMetadata';
+import { useApplicationSettings } from 'src/hooks/useApplicationSettings';
 import { useAppSelector } from 'src/hooks/useAppSelector';
+import { useFooterLayout } from 'src/hooks/useFooterLayout';
+import { useOrgs } from 'src/hooks/useOrgs';
+import { useProfile } from 'src/hooks/useProfile';
 import { makeGetAllowAnonymousSelector } from 'src/selectors/getAllowAnonymous';
 import { makeGetHasErrorsSelector } from 'src/selectors/getErrors';
 import { selectAppName, selectAppOwner } from 'src/selectors/language';
 import { httpGet } from 'src/utils/network/networking';
 import { shouldGeneratePdf } from 'src/utils/pdf';
 import { getEnvironmentLoginUrl, refreshJwtTokenUrl } from 'src/utils/urls/appUrlHelper';
+import type { IApplicationMetadata } from 'src/features/applicationMetadata';
+import type { IApplicationSettings } from 'src/types/shared';
 
 // 1 minute = 60.000ms
 const TEN_MINUTE_IN_MILLISECONDS: number = 60000 * 10;
 
-export const App = () => {
+export const App = (): JSX.Element => <AppStartup />;
+
+const AppStartup = (): JSX.Element => {
+  const { data: applicationSettings, isError: hasApplicationSettingsError } = useApplicationSettings();
+  const { data: applicationMetadata, isError: hasApplicationMetadataError } = useApplicationMetadata();
+  const { data: orgs, isError: hasOrgsError } = useOrgs();
+  const { data: _, isError: hasFooterError } = useFooterLayout({
+    enabled: !!applicationMetadata?.features?.footer,
+  });
+  const { data: profile, isError: hasProfileError } = useProfile();
+
+  const componentIsReady = applicationSettings && applicationMetadata && orgs && profile;
+
+  const componentHasErrors =
+    hasApplicationSettingsError || hasApplicationMetadataError || hasOrgsError || hasProfileError || hasFooterError;
+
+  if (componentHasErrors) {
+    return <h1>Should display error page</h1>;
+  }
+
+  if (componentIsReady) {
+    return (
+      <AppInternal
+        applicationSettings={applicationSettings}
+        applicationMetadata={applicationMetadata}
+      />
+    );
+  }
+
+  return <h1>Should display spinner while loading the app</h1>;
+};
+
+type AppInternalProps = {
+  applicationSettings: IApplicationSettings;
+  applicationMetadata: IApplicationMetadata;
+};
+const AppInternal = ({ applicationSettings, applicationMetadata }: AppInternalProps): JSX.Element | null => {
   const dispatch = useAppDispatch();
   const hasErrorSelector = makeGetHasErrorsSelector();
   const hasApiErrors: boolean = useAppSelector(hasErrorSelector);
-  const appOidcProvider = useAppSelector((state) => state.applicationSettings?.applicationSettings?.appOidcProvider);
+  const appOidcProvider = applicationSettings.appOidcProvider;
   const lastRefreshTokenTimestamp = React.useRef(0);
 
   const allowAnonymousSelector = makeGetAllowAnonymousSelector();
-  const allowAnonymous = useAppSelector(allowAnonymousSelector);
+  const allowAnonymous: boolean = useAppSelector(allowAnonymousSelector);
 
   const appName = useAppSelector(selectAppName);
   const appOwner = useAppSelector(selectAppOwner);
@@ -106,19 +149,27 @@ export const App = () => {
     return null;
   }
   return (
-    <Routes>
-      <Route
-        path='/'
-        element={<Entrypoint allowAnonymous={allowAnonymous} />}
-      />
-      <Route
-        path='/partyselection/*'
-        element={<PartySelection />}
-      />
-      <Route
-        path='/instance/:partyId/:instanceGuid'
-        element={<ProcessWrapper />}
-      />
-    </Routes>
+    <>
+      {JSON.stringify(appOidcProvider)}
+      <Routes>
+        <Route
+          path='/'
+          element={
+            <Entrypoint
+              allowAnonymous={allowAnonymous}
+              applicationMetadata={applicationMetadata}
+            />
+          }
+        />
+        <Route
+          path='/partyselection/*'
+          element={<PartySelection />}
+        />
+        <Route
+          path='/instance/:partyId/:instanceGuid'
+          element={<ProcessWrapper />}
+        />
+      </Routes>
+    </>
   );
 };

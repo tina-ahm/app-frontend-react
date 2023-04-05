@@ -64,7 +64,7 @@ export function NavigationButtonsComponent({ node }: INavigationButtons) {
     [],
   );
 
-  const OnClickNext = () => {
+  const onClickNext = () => {
     const runValidations = reducePageValidations(activeTriggers);
     const keepScrollPosAction: IKeepComponentScrollPos = {
       componentId: id,
@@ -132,7 +132,7 @@ export function NavigationButtonsComponent({ node }: INavigationButtons) {
         <Grid item>
           <Button
             ref={refNext}
-            onClick={OnClickNext}
+            onClick={onClickNext}
             disabled={disableNext}
           >
             {getTextFromAppOrDefault(nextTextKey, textResources, language, undefined, true)}

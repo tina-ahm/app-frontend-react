@@ -220,7 +220,10 @@ describe('Entrypoint', () => {
   function render({ store }) {
     return renderWithProviders(
       <MemoryRouter>
-        <Entrypoint />
+        <Entrypoint
+          allowAnonymous={false}
+          applicationMetadata={{} as IApplicationMetadata}
+        />
       </MemoryRouter>,
       { store },
     );
