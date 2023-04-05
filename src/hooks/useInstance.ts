@@ -14,7 +14,7 @@ export const useInstance = (instanceId: string, options?: UseQueryOptions) => {
   const { fetchInstanceByInstanceId } = useAppServicesContext();
   return useQuery([ServerStateCacheKey.GetInstanceById, instanceId], () => fetchInstanceByInstanceId(instanceId), {
     ...options,
-    onError: (error: AxiosError) => {
+    onError: (error: AxiosError & { response: { data: { RequiredAuthenticationLevel: string } } }) => {
       if (error.response && error.response.status === 403 && error.response.data) {
         const reqAuthLevel = error.response.data.RequiredAuthenticationLevel;
         if (reqAuthLevel) {
