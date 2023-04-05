@@ -6,6 +6,7 @@ import {
   getActiveInstancesUrl,
   getFooterLayoutUrl,
   getPartyValidationUrl,
+  instancesControllerUrl,
   profileApiUrl,
 } from 'src/utils/urls/appUrlHelper';
 import { orgsListUrl } from 'src/utils/urls/urlHelper';
@@ -27,3 +28,4 @@ export const fetchActiveInstances = (partyId: string): Promise<ISimpleInstance[]
   httpGet(getActiveInstancesUrl(partyId));
 
 export const getPartyValidation = (partyId: string) => httpPost(getPartyValidationUrl(partyId));
+export const fetchInstanceByInstanceId = (instanceId: string) => httpGet(`${instancesControllerUrl}/${instanceId}`);
