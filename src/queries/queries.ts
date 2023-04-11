@@ -5,15 +5,17 @@ import {
   applicationSettingsApiUrl,
   getActiveInstancesUrl,
   getFooterLayoutUrl,
+  getLayoutSetsUrl,
   getPartyValidationUrl,
+  getProcessStateUrl,
   instancesControllerUrl,
   profileApiUrl,
 } from 'src/utils/urls/appUrlHelper';
 import { orgsListUrl } from 'src/utils/urls/urlHelper';
 import type { IApplicationMetadata } from 'src/features/applicationMetadata';
 import type { IFooterLayout } from 'src/features/footer/types';
-import type { ISimpleInstance } from 'src/types';
-import type { IAltinnOrgs, IApplicationSettings, IProfile } from 'src/types/shared';
+import type { ILayoutSets, ISimpleInstance } from 'src/types';
+import type { IAltinnOrgs, IApplicationSettings, IInstance, IProcess, IProfile } from 'src/types/shared';
 
 export const fetchApplicationSettings = (): Promise<IApplicationSettings> => httpGet(applicationSettingsApiUrl);
 export const fetchApplicationMetadata = (): Promise<IApplicationMetadata> => httpGet(applicationMetadataApiUrl);
@@ -28,4 +30,7 @@ export const fetchActiveInstances = (partyId: string): Promise<ISimpleInstance[]
   httpGet(getActiveInstancesUrl(partyId));
 
 export const getPartyValidation = (partyId: string) => httpPost(getPartyValidationUrl(partyId));
-export const fetchInstanceByInstanceId = (instanceId: string) => httpGet(`${instancesControllerUrl}/${instanceId}`);
+export const fetchInstanceByInstanceId = (instanceId: string): Promise<IInstance> =>
+  httpGet(`${instancesControllerUrl}/${instanceId}`);
+export const fetchLayoutSets = (): Promise<ILayoutSets> => httpGet(getLayoutSetsUrl());
+export const fetchProcess = (): Promise<IProcess> => httpGet(getProcessStateUrl());

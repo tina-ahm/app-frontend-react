@@ -12,8 +12,8 @@ import { useApplicationMetadata } from 'src/hooks/useApplicationMetadata';
 import { useApplicationSettings } from 'src/hooks/useApplicationSettings';
 import { useAppSelector } from 'src/hooks/useAppSelector';
 import { useFooterLayout } from 'src/hooks/useFooterLayout';
+import { useLayoutSetsQuery } from 'src/hooks/useLayoutSets';
 import { useOrgs } from 'src/hooks/useOrgs';
-import { useProfile } from 'src/hooks/useProfile';
 import { makeGetAllowAnonymousSelector } from 'src/selectors/getAllowAnonymous';
 import { makeGetHasErrorsSelector } from 'src/selectors/getErrors';
 import { selectAppName, selectAppOwner } from 'src/selectors/language';
@@ -31,16 +31,16 @@ export const App = (): JSX.Element => <AppStartup />;
 const AppStartup = (): JSX.Element => {
   const { data: applicationSettings, isError: hasApplicationSettingsError } = useApplicationSettings();
   const { data: applicationMetadata, isError: hasApplicationMetadataError } = useApplicationMetadata();
+  const { data: layoutSets, isError: hasLayoutSetError } = useLayoutSetsQuery();
   const { data: orgs, isError: hasOrgsError } = useOrgs();
   const { data: _, isError: hasFooterError } = useFooterLayout({
     enabled: !!applicationMetadata?.features?.footer,
   });
-  const { data: profile, isError: hasProfileError } = useProfile();
 
-  const componentIsReady = applicationSettings && applicationMetadata && orgs && profile;
+  const componentIsReady = applicationSettings && applicationMetadata && orgs && layoutSets;
 
   const componentHasErrors =
-    hasApplicationSettingsError || hasApplicationMetadataError || hasOrgsError || hasProfileError || hasFooterError;
+    hasApplicationSettingsError || hasApplicationMetadataError || hasOrgsError || hasFooterError || hasLayoutSetError;
 
   if (componentHasErrors) {
     return <h1>Should display error page</h1>;
@@ -150,7 +150,6 @@ const AppInternal = ({ applicationSettings, applicationMetadata }: AppInternalPr
   }
   return (
     <>
-      {JSON.stringify(appOidcProvider)}
       <Routes>
         <Route
           path='/'

@@ -69,7 +69,7 @@ export const queueSlice = () => {
           yield put(TextResourcesActions.fetch());
           yield put(LanguageActions.fetchLanguage());
           yield put(ApplicationMetadataActions.get());
-          yield put(FormLayoutActions.fetchSets());
+          // yield put(FormLayoutActions.fetchSets());
           // yield put(FooterLayoutActions.fetch());
           // yield put(OrgsActions.fetch());
           yield put(QueueActions.startInitialAppTaskQueueFulfilled());
