@@ -9,6 +9,7 @@ import { HashRouter } from 'react-router-dom';
 
 import { AppWrapper } from '@altinn/altinn-design-system';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { App } from 'src/App';
 import { ErrorBoundary } from 'src/components/ErrorBoundary';
@@ -49,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <App />
                   </ExprContextWrapper>
                 </AppServicesContextProvider>
+                <ReactQueryDevtools initialIsOpen={false} />
               </QueryClientProvider>
             </ErrorBoundary>
           </ThemeWrapper>
