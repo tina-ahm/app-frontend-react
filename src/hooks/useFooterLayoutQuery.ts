@@ -9,7 +9,7 @@ enum ServerStateCacheKey {
   FetchFooterLayout = 'GET_FOOTER_LAYOUT',
 }
 
-export const useFooterLayout = (options: QueryOptions): UseQueryResult<IFooterLayout> => {
+export const useFooterLayoutQuery = (options: QueryOptions): UseQueryResult<IFooterLayout> => {
   const { fetchFooterLayout } = useAppServicesContext();
   return useQuery([ServerStateCacheKey.FetchFooterLayout], fetchFooterLayout, { ...options });
 };

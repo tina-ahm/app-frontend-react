@@ -13,7 +13,7 @@ import { MissingRolesError } from 'src/features/instantiate/containers/MissingRo
 import { NoValidPartiesError } from 'src/features/instantiate/containers/NoValidPartiesError';
 import { QueueActions } from 'src/features/queue/queueSlice';
 import { ValidationActions } from 'src/features/validation/validationSlice';
-import { useActiveInstances } from 'src/hooks/useActiveInstances';
+import { useActiveInstancesQuery } from 'src/hooks/useActiveInstancesQuery';
 import { useAppDispatch } from 'src/hooks/useAppDispatch';
 import { useAppSelector } from 'src/hooks/useAppSelector';
 import { usePartyValidation } from 'src/hooks/usePartyValidation';
@@ -38,7 +38,7 @@ export function Entrypoint({ allowAnonymous, applicationMetadata }: EntrypointPr
     isError: errorWhileMutatePartyValidation,
   } = usePartyValidation();
 
-  const { data: activeInstances, isError: errorWhileFetchingActiveInstances } = useActiveInstances(
+  const { data: activeInstances, isError: errorWhileFetchingActiveInstances } = useActiveInstancesQuery(
     selectedParty?.partyId as string,
     {
       enabled: !!selectedParty?.partyId && partyValidation?.data.valid && action === 'select-instance',

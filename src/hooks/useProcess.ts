@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { IsLoadingActions } from 'src/features/isLoading/isLoadingSlice';
 import { QueueActions } from 'src/features/queue/queueSlice';
 import { useAppDispatch } from 'src/hooks/useAppDispatch';
-import { useApplicationMetadata } from 'src/hooks/useApplicationMetadata';
+import { useApplicationMetadataQuery } from 'src/hooks/useApplicationMetadataQuery';
 import { useAppSelector } from 'src/hooks/useAppSelector';
 import { useProcessQuery } from 'src/hooks/useProcessQuery';
 import { selectAppName, selectAppOwner } from 'src/selectors/language';
@@ -14,7 +14,7 @@ export function useProcess() {
   const dispatch = useAppDispatch();
 
   // const instanceData = useAppSelector((state) => state.instanceData.instance);
-  const { data: applicationMetadata } = useApplicationMetadata();
+  const { data: applicationMetadata } = useApplicationMetadataQuery();
 
   const { data: process } = useProcessQuery();
   const layoutSets = useAppSelector((state) => state.formLayout.layoutsets);

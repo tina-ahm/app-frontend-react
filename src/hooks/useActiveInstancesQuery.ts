@@ -9,7 +9,7 @@ enum ServerStateCacheKey {
   getActiveInstances = 'GET_ACTIVE_INSTANCES',
 }
 
-export const useActiveInstances = (
+export const useActiveInstancesQuery = (
   partyId: string,
   options: QueryOptions,
 ): UseQueryResult<ISimpleInstance[], unknown> => {

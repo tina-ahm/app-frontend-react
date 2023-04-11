@@ -8,7 +8,7 @@ enum ServerStateCacheKey {
   ApplicationSettings = 'APPLICATION_SETTINGS',
 }
 
-export const useApplicationSettings = (): UseQueryResult<IApplicationSettings, unknown> => {
+export const useApplicationSettingsQuery = (): UseQueryResult<IApplicationSettings, unknown> => {
   const { fetchApplicationSettings } = useAppServicesContext();
   return useQuery([ServerStateCacheKey.ApplicationSettings], fetchApplicationSettings);
 };

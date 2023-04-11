@@ -8,12 +8,12 @@ import { UnknownError } from 'src/features/instantiate/containers/UnknownError';
 import { PdfActions } from 'src/features/pdf/data/pdfSlice';
 import { QueueActions } from 'src/features/queue/queueSlice';
 import { useAppDispatch } from 'src/hooks/useAppDispatch';
-import { useApplicationMetadata } from 'src/hooks/useApplicationMetadata';
-import { useApplicationSettings } from 'src/hooks/useApplicationSettings';
+import { useApplicationMetadataQuery } from 'src/hooks/useApplicationMetadataQuery';
+import { useApplicationSettingsQuery } from 'src/hooks/useApplicationSettingsQuery';
 import { useAppSelector } from 'src/hooks/useAppSelector';
-import { useFooterLayout } from 'src/hooks/useFooterLayout';
-import { useLayoutSetsQuery } from 'src/hooks/useLayoutSets';
-import { useOrgs } from 'src/hooks/useOrgs';
+import { useFooterLayoutQuery } from 'src/hooks/useFooterLayoutQuery';
+import { useLayoutSetsQuery } from 'src/hooks/useLayoutSetsQuery';
+import { useOrgsQuery } from 'src/hooks/useOrgsQuery';
 import { makeGetAllowAnonymousSelector } from 'src/selectors/getAllowAnonymous';
 import { makeGetHasErrorsSelector } from 'src/selectors/getErrors';
 import { selectAppName, selectAppOwner } from 'src/selectors/language';
@@ -29,11 +29,11 @@ const TEN_MINUTE_IN_MILLISECONDS: number = 60000 * 10;
 export const App = (): JSX.Element => <AppStartup />;
 
 const AppStartup = (): JSX.Element => {
-  const { data: applicationSettings, isError: hasApplicationSettingsError } = useApplicationSettings();
-  const { data: applicationMetadata, isError: hasApplicationMetadataError } = useApplicationMetadata();
+  const { data: applicationSettings, isError: hasApplicationSettingsError } = useApplicationSettingsQuery();
+  const { data: applicationMetadata, isError: hasApplicationMetadataError } = useApplicationMetadataQuery();
   const { data: layoutSets, isError: hasLayoutSetError } = useLayoutSetsQuery();
-  const { data: orgs, isError: hasOrgsError } = useOrgs();
-  const { data: _, isError: hasFooterError } = useFooterLayout({
+  const { data: orgs, isError: hasOrgsError } = useOrgsQuery();
+  const { data: _, isError: hasFooterError } = useFooterLayoutQuery({
     enabled: !!applicationMetadata?.features?.footer,
   });
 

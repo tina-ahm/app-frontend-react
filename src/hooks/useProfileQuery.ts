@@ -7,7 +7,7 @@ import type { IProfile } from 'src/types/shared';
 enum ServerStateCacheKey {
   UserProfile = 'GET_USER_PROFILE',
 }
-export const useProfile = (): UseQueryResult<IProfile> => {
+export const useProfileQuery = (): UseQueryResult<IProfile> => {
   const { fetchUserProfile } = useAppServicesContext();
   return useQuery([ServerStateCacheKey.UserProfile], fetchUserProfile);
 };

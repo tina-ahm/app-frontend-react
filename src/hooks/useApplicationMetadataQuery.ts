@@ -8,7 +8,7 @@ enum ServerStateCacheKey {
   ApplicationMetadata = 'ApplicationMetadata',
 }
 
-export const useApplicationMetadata = (): UseQueryResult<IApplicationMetadata, unknown> => {
+export const useApplicationMetadataQuery = (): UseQueryResult<IApplicationMetadata, unknown> => {
   const { fetchApplicationMetadata } = useAppServicesContext();
   return useQuery([ServerStateCacheKey.ApplicationMetadata], fetchApplicationMetadata);
 };
