@@ -9,7 +9,9 @@ import {
   getPartyValidationUrl,
   getProcessStateUrl,
   instancesControllerUrl,
+  oldTextResourcesUrl,
   profileApiUrl,
+  textResourcesUrl,
 } from 'src/utils/urls/appUrlHelper';
 import { orgsListUrl } from 'src/utils/urls/urlHelper';
 import type { IApplicationMetadata } from 'src/features/applicationMetadata';
@@ -34,3 +36,9 @@ export const fetchInstanceByInstanceId = (instanceId: string): Promise<IInstance
   httpGet(`${instancesControllerUrl}/${instanceId}`);
 export const fetchLayoutSets = (): Promise<ILayoutSets> => httpGet(getLayoutSetsUrl());
 export const fetchProcess = (): Promise<IProcess> => httpGet(getProcessStateUrl());
+export const fetchTextResources = (appLanguage: string, shouldUseDeprecatedEndpoint = false) => {
+  if (shouldUseDeprecatedEndpoint) {
+    return httpGet(oldTextResourcesUrl);
+  }
+  return httpGet(textResourcesUrl(appLanguage));
+};

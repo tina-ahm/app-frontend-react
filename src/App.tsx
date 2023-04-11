@@ -14,6 +14,7 @@ import { useAppSelector } from 'src/hooks/useAppSelector';
 import { useFooterLayoutQuery } from 'src/hooks/useFooterLayoutQuery';
 import { useLayoutSetsQuery } from 'src/hooks/useLayoutSetsQuery';
 import { useOrgsQuery } from 'src/hooks/useOrgsQuery';
+import { useTextResourcesQuery } from 'src/hooks/useTextResourcesQuery';
 import { makeGetAllowAnonymousSelector } from 'src/selectors/getAllowAnonymous';
 import { makeGetHasErrorsSelector } from 'src/selectors/getErrors';
 import { selectAppName, selectAppOwner } from 'src/selectors/language';
@@ -32,15 +33,22 @@ const AppStartup = (): JSX.Element => {
   const { data: applicationSettings, isError: hasApplicationSettingsError } = useApplicationSettingsQuery();
   const { data: applicationMetadata, isError: hasApplicationMetadataError } = useApplicationMetadataQuery();
   const { data: layoutSets, isError: hasLayoutSetError } = useLayoutSetsQuery();
+  // TODO get the language based on the language-selector or profile
+  const { data: textResources, isError: isTextResourcesError } = useTextResourcesQuery('nb');
   const { data: orgs, isError: hasOrgsError } = useOrgsQuery();
   const { data: _, isError: hasFooterError } = useFooterLayoutQuery({
     enabled: !!applicationMetadata?.features?.footer,
   });
 
-  const componentIsReady = applicationSettings && applicationMetadata && orgs && layoutSets;
+  const componentIsReady = applicationSettings && applicationMetadata && orgs && layoutSets && textResources;
 
   const componentHasErrors =
-    hasApplicationSettingsError || hasApplicationMetadataError || hasOrgsError || hasFooterError || hasLayoutSetError;
+    hasApplicationSettingsError ||
+    hasApplicationMetadataError ||
+    hasOrgsError ||
+    hasFooterError ||
+    hasLayoutSetError ||
+    isTextResourcesError;
 
   if (componentHasErrors) {
     return <h1>Should display error page</h1>;
