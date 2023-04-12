@@ -111,12 +111,14 @@ export function Entrypoint({ allowAnonymous, applicationMetadata }: EntrypointPr
       }
       return (
         // let user decide if continuing on existing or starting new
+
         <PresentationComponent
           header={appName || ''}
           appOwner={appOwner}
           type={ProcessTaskType.Unknown}
         >
           <InstanceSelection
+            allowAnonymous={allowAnonymous}
             instances={activeInstances}
             onNewInstance={handleNewInstance}
           />
