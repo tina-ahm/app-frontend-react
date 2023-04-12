@@ -23,5 +23,10 @@ const useTextResourcesQueryLatest = (appLanguage: string): UseQueryResult<ITextR
 
 const useTextResourcesQueryDeprecated = (enabled: boolean): UseQueryResult<ITextResource> => {
   const { fetchTextResources } = useAppServicesContext();
-  return useQuery([ServerStateCacheKey.DeprecatedTextResources], () => fetchTextResources('', true), { enabled });
+  const shouldUseDeprecatedEndpoint = true;
+  return useQuery(
+    [ServerStateCacheKey.DeprecatedTextResources],
+    () => fetchTextResources('', shouldUseDeprecatedEndpoint),
+    { enabled },
+  );
 };
