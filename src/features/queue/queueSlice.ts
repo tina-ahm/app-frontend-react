@@ -1,20 +1,14 @@
 import { put } from 'redux-saga/effects';
 import type { SagaIterator } from 'redux-saga';
 
-import { ApplicationMetadataActions } from 'src/features/applicationMetadata/applicationMetadataSlice';
 import { AttachmentActions } from 'src/features/attachments/attachmentSlice';
 import { DataModelActions } from 'src/features/datamodel/datamodelSlice';
 import { FormDataActions } from 'src/features/formData/formDataSlice';
 import { IsLoadingActions } from 'src/features/isLoading/isLoadingSlice';
-import { LanguageActions } from 'src/features/language/languageSlice';
 import { FormLayoutActions } from 'src/features/layout/formLayoutSlice';
-import { PartyActions } from 'src/features/party/partySlice';
 import { PdfActions } from 'src/features/pdf/data/pdfSlice';
-import { ProfileActions } from 'src/features/profile/profileSlice';
 import { watchStartInitialInfoTaskQueueSaga } from 'src/features/queue/infoTask/infoTaskQueueSaga';
-import { TextResourcesActions } from 'src/features/textResources/textResourcesSlice';
 import { createSagaSlice } from 'src/redux/sagaSlice';
-import { profileApiUrl } from 'src/utils/urls/appUrlHelper';
 import type { IQueueError, IQueueState } from 'src/features/queue/index';
 import type { ActionsFromSlice, MkActionType } from 'src/redux/sagaSlice';
 
@@ -61,41 +55,6 @@ export const queueSlice = () => {
         reducer: (state, action) => {
           const { error } = action.payload;
           state.stateless.error = error;
-        },
-      }),
-      startInitialAppTaskQueue: mkAction<void>({
-        *takeEvery(): SagaIterator {
-          // yield put(ApplicationSettingsActions.fetchApplicationSettings());
-          yield put(TextResourcesActions.fetch());
-          yield put(LanguageActions.fetchLanguage());
-          yield put(ApplicationMetadataActions.get());
-          // yield put(FormLayoutActions.fetchSets());
-          // yield put(FooterLayoutActions.fetch());
-          // yield put(OrgsActions.fetch());
-          yield put(QueueActions.startInitialAppTaskQueueFulfilled());
-        },
-        reducer: (state) => {
-          state.appTask.isDone = false;
-        },
-      }),
-      startInitialAppTaskQueueFulfilled: mkAction<void>({
-        reducer: (state) => {
-          state.appTask.isDone = true;
-        },
-      }),
-      startInitialUserTaskQueue: mkAction<void>({
-        *takeEvery(): SagaIterator {
-          yield put(ProfileActions.fetch({ url: profileApiUrl }));
-          yield put(PartyActions.getCurrentParty());
-          yield put(QueueActions.startInitialUserTaskQueueFulfilled());
-        },
-        reducer: (state) => {
-          state.userTask.isDone = false;
-        },
-      }),
-      startInitialUserTaskQueueFulfilled: mkAction<void>({
-        reducer: (state) => {
-          state.userTask.isDone = true;
         },
       }),
       startInitialDataTaskQueue: mkAction<void>({

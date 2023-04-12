@@ -8,14 +8,6 @@ describe('queueSlice', () => {
     state = initialState;
   });
 
-  it('handles startInitialAppTaskQueue action', () => {
-    let nextState = slice.reducer(state, QueueActions.startInitialAppTaskQueue);
-    expect(nextState.appTask.isDone).toBeFalsy();
-    nextState = slice.reducer(nextState, QueueActions.startInitialAppTaskQueueFulfilled);
-    expect(nextState.appTask.isDone).toBeTruthy();
-    expect(nextState.appTask.error).toBeNull();
-  });
-
   it('handles startInitialDataTaskQueue action', () => {
     let nextState = slice.reducer(state, QueueActions.startInitialDataTaskQueue);
     expect(nextState.dataTask.isDone).toBeFalsy();

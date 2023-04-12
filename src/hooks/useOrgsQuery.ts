@@ -2,9 +2,16 @@ import { useQuery } from '@tanstack/react-query';
 import type { UseQueryResult } from '@tanstack/react-query';
 
 import { useAppServicesContext } from 'src/contexts/appServiceContext';
+import { OrgsActions } from 'src/features/orgs/orgsSlice';
+import { useAppDispatch } from 'src/hooks/useAppDispatch';
 import type { IAltinnOrgs } from 'src/types/shared';
 
 export const useOrgsQuery = (): UseQueryResult<IAltinnOrgs> => {
+  const dispatch = useAppDispatch();
   const { fetchOrgs } = useAppServicesContext();
-  return useQuery([], fetchOrgs);
+  return useQuery([], fetchOrgs, {
+    onSuccess: (orgs) => {
+      dispatch(OrgsActions.fetchFulfilled({ orgs }));
+    },
+  });
 };

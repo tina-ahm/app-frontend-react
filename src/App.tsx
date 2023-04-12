@@ -5,9 +5,7 @@ import { ProcessWrapper } from 'src/components/wrappers/ProcessWrapper';
 import { Entrypoint } from 'src/features/entrypoint/Entrypoint';
 import { PartySelection } from 'src/features/instantiate/containers/PartySelection';
 import { UnknownError } from 'src/features/instantiate/containers/UnknownError';
-import { QueueActions } from 'src/features/queue/queueSlice';
 import { useGetAllowAnonymous } from 'src/hooks/useAllowAnonymous';
-import { useAppDispatch } from 'src/hooks/useAppDispatch';
 import { useApplicationMetadataQuery } from 'src/hooks/useApplicationMetadataQuery';
 import { useApplicationSettingsQuery } from 'src/hooks/useApplicationSettingsQuery';
 import { useAppSelector } from 'src/hooks/useAppSelector';
@@ -16,6 +14,7 @@ import { useKeepAlive } from 'src/hooks/useKeepAlive';
 import { useLayoutSetsQuery } from 'src/hooks/useLayoutSetsQuery';
 import { useOrgsQuery } from 'src/hooks/useOrgsQuery';
 import { useProfileQuery } from 'src/hooks/useProfileQuery';
+import { useSelectedPartyQuery } from 'src/hooks/useSelectedPartyQuery';
 import { useTextResourcesQuery } from 'src/hooks/useTextResourcesQuery';
 import { useUpdatePdfState } from 'src/hooks/useUpdatePdfState';
 import { selectAppName, selectAppOwner } from 'src/selectors/language';
@@ -32,9 +31,7 @@ const AppStartup = (): JSX.Element | null => {
   // TODO get the language based on the language-selector or profile
   const { data: textResources, isError: isTextResourcesError } = useTextResourcesQuery('nb');
   const { data: orgs, isError: hasOrgsError } = useOrgsQuery();
-  const { data: _, isError: hasFooterError } = useFooterLayoutQuery({
-    enabled: !!applicationMetadata?.features?.footer,
-  });
+  const { data: _, isError: hasFooterError } = useFooterLayoutQuery(!!applicationMetadata?.features?.footer);
 
   const componentIsReady = applicationSettings && applicationMetadata && orgs && layoutSets && textResources;
 
@@ -74,12 +71,11 @@ const AppInternal = ({
   applicationMetadata,
   layoutSets,
 }: AppInternalProps): JSX.Element | null => {
-  const dispatch = useAppDispatch();
-
   const allowAnonymous = useGetAllowAnonymous(applicationMetadata, layoutSets);
   const appName = useAppSelector(selectAppName);
   const appOwner = useAppSelector(selectAppOwner);
   useProfileQuery(allowAnonymous === false);
+  useSelectedPartyQuery(allowAnonymous === false);
   useKeepAlive(applicationSettings.appOidcProvider, allowAnonymous);
   useUpdatePdfState(allowAnonymous);
 
@@ -93,17 +89,6 @@ const AppInternal = ({
       document.title = appOwner;
     }
   }, [appOwner, appName]);
-
-  React.useEffect(() => {
-    if (allowAnonymous === false) {
-      dispatch(QueueActions.startInitialUserTaskQueue());
-    }
-  }, [allowAnonymous, dispatch]);
-
-  // This useEffect can be removed when we have migrated to React Query
-  React.useEffect(() => {
-    dispatch(QueueActions.startInitialAppTaskQueue());
-  }, [dispatch]);
 
   // Ready to be rendered once allowAnonymous value has been determined
   const isPageReadyToRender = allowAnonymous !== undefined;

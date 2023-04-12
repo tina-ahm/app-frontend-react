@@ -40,9 +40,7 @@ export function Entrypoint({ allowAnonymous, applicationMetadata }: EntrypointPr
 
   const { data: activeInstances, isError: errorWhileFetchingActiveInstances } = useActiveInstancesQuery(
     selectedParty?.partyId as string,
-    {
-      enabled: !!selectedParty?.partyId && partyValidation?.data.valid && action === 'select-instance',
-    },
+    !!selectedParty?.partyId && partyValidation?.data.valid && action === 'select-instance',
   );
 
   const statelessLoading = useAppSelector((state) => state.isLoading.stateless);

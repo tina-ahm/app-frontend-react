@@ -7,6 +7,7 @@ import { getLanguageFromKey, getParsedLanguageFromKey, getParsedLanguageFromText
 import { getHostname } from 'src/utils/urls/appUrlHelper';
 
 export function MissingRolesError() {
+  // The language hook below should use the new hook instead
   const language = useAppSelector((state) => state.language.language);
   const selectedParty = useAppSelector((state) => state.party.selectedParty);
 

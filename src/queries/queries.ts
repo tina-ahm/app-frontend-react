@@ -3,6 +3,7 @@ import { httpGet } from 'src/utils/network/sharedNetworking';
 import {
   applicationMetadataApiUrl,
   applicationSettingsApiUrl,
+  currentPartyUrl,
   getActiveInstancesUrl,
   getFooterLayoutUrl,
   getLayoutSetsUrl,
@@ -42,3 +43,4 @@ export const fetchTextResources = (appLanguage: string, shouldUseDeprecatedEndpo
   }
   return httpGet(textResourcesUrl(appLanguage));
 };
+export const fetchCurrentParty = () => httpGet(currentPartyUrl);
