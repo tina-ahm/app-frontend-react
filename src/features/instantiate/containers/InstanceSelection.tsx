@@ -11,13 +11,14 @@ import { AltinnMobileTableItem } from 'src/components/table/AltinnMobileTableIte
 import { AltinnTableBody } from 'src/components/table/AltinnTableBody';
 import { AltinnTableHeader } from 'src/components/table/AltinnTableHeader';
 import { AltinnTableRow } from 'src/components/table/AltinnTableRow';
-import { useAppSelector } from 'src/hooks/useAppSelector';
+import { useLanguage } from 'src/hooks/useLanguage';
 import { getLanguageFromKey } from 'src/language/sharedLanguage';
 import { getInstanceUiUrl } from 'src/utils/urls/appUrlHelper';
 import type { ISimpleInstance } from 'src/types';
 
 export interface IInstanceSelectionProps {
   instances: ISimpleInstance[];
+  allowAnonymous: boolean;
   onNewInstance: () => void;
 }
 
@@ -50,14 +51,15 @@ const buttonCell = {
   padding: '4px 36px 4px 4px',
 };
 
-export function InstanceSelection({ instances, onNewInstance }: IInstanceSelectionProps) {
-  const language = useAppSelector((state) => state.language.language);
+export function InstanceSelection({ instances, onNewInstance, allowAnonymous }: IInstanceSelectionProps) {
+  const language = useLanguage(allowAnonymous);
   const mobileView = useMediaQuery('(max-width:992px)'); // breakpoint on altinn-modal
 
   const openInstance = (instanceId: string) => {
     window.location.href = getInstanceUiUrl(instanceId);
   };
 
+  // if this happens, it should display error message to the user.
   if (!language) {
     return null;
   }

@@ -49,6 +49,7 @@ describe('InstanceSelection', () => {
     const rendered = renderInstanceSelection(mockStore, {
       instances: mockActiveInstances,
       onNewInstance: mockStartNewInstance,
+      allowAnonymous: false,
     });
     // eslint-disable-next-line
     const altinnTable = rendered.container.querySelector('#instance-selection-table');
@@ -62,6 +63,7 @@ describe('InstanceSelection', () => {
     const rendered = renderInstanceSelection(mockStore, {
       instances: mockActiveInstances,
       onNewInstance: mockStartNewInstance,
+      allowAnonymous: false,
     });
     // eslint-disable-next-line
     const altinnMobileTable = rendered.container.querySelector('#instance-selection-mobile-table');
@@ -72,6 +74,7 @@ describe('InstanceSelection', () => {
     renderInstanceSelection(mockStore, {
       instances: mockActiveInstances,
       onNewInstance: mockStartNewInstance,
+      allowAnonymous: false,
     });
 
     const firstInstanceChangedBy = await screen.findByText(mockActiveInstances[0].lastChangedBy);
@@ -91,6 +94,7 @@ describe('InstanceSelection', () => {
     renderInstanceSelection(mockStore, {
       instances: mockActiveInstances,
       onNewInstance: mockStartNewInstance,
+      allowAnonymous: false,
     });
 
     await act(() => user.click(screen.getByText(/start på nytt/i)));
@@ -101,6 +105,7 @@ describe('InstanceSelection', () => {
     renderInstanceSelection(mockStore, {
       instances: mockActiveInstances,
       onNewInstance: mockStartNewInstance,
+      allowAnonymous: false,
     });
     const row = screen.getByRole('row', {
       name: /10\/05\/2021 navn navnesen fortsett her/i,
@@ -121,6 +126,7 @@ describe('InstanceSelection', () => {
     renderInstanceSelection(mockStore, {
       instances: mockActiveInstances,
       onNewInstance: mockStartNewInstance,
+      allowAnonymous: false,
     });
 
     const row = screen.getByRole('row', {
