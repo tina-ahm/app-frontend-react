@@ -5,31 +5,27 @@ import { ProcessWrapper } from 'src/components/wrappers/ProcessWrapper';
 import { Entrypoint } from 'src/features/entrypoint/Entrypoint';
 import { PartySelection } from 'src/features/instantiate/containers/PartySelection';
 import { UnknownError } from 'src/features/instantiate/containers/UnknownError';
-import { PdfActions } from 'src/features/pdf/data/pdfSlice';
 import { QueueActions } from 'src/features/queue/queueSlice';
+import { useGetAllowAnonymous } from 'src/hooks/useAllowAnonymous';
 import { useAppDispatch } from 'src/hooks/useAppDispatch';
 import { useApplicationMetadataQuery } from 'src/hooks/useApplicationMetadataQuery';
 import { useApplicationSettingsQuery } from 'src/hooks/useApplicationSettingsQuery';
 import { useAppSelector } from 'src/hooks/useAppSelector';
 import { useFooterLayoutQuery } from 'src/hooks/useFooterLayoutQuery';
+import { useKeepAlive } from 'src/hooks/useKeepAlive';
 import { useLayoutSetsQuery } from 'src/hooks/useLayoutSetsQuery';
 import { useOrgsQuery } from 'src/hooks/useOrgsQuery';
+import { useProfileQuery } from 'src/hooks/useProfileQuery';
 import { useTextResourcesQuery } from 'src/hooks/useTextResourcesQuery';
-import { makeGetAllowAnonymousSelector } from 'src/selectors/getAllowAnonymous';
-import { makeGetHasErrorsSelector } from 'src/selectors/getErrors';
+import { useUpdatePdfState } from 'src/hooks/useUpdatePdfState';
 import { selectAppName, selectAppOwner } from 'src/selectors/language';
-import { httpGet } from 'src/utils/network/networking';
-import { shouldGeneratePdf } from 'src/utils/pdf';
-import { getEnvironmentLoginUrl, refreshJwtTokenUrl } from 'src/utils/urls/appUrlHelper';
 import type { IApplicationMetadata } from 'src/features/applicationMetadata';
+import type { ILayoutSets } from 'src/types';
 import type { IApplicationSettings } from 'src/types/shared';
-
-// 1 minute = 60.000ms
-const TEN_MINUTE_IN_MILLISECONDS: number = 60000 * 10;
 
 export const App = (): JSX.Element => <AppStartup />;
 
-const AppStartup = (): JSX.Element => {
+const AppStartup = (): JSX.Element | null => {
   const { data: applicationSettings, isError: hasApplicationSettingsError } = useApplicationSettingsQuery();
   const { data: applicationMetadata, isError: hasApplicationMetadataError } = useApplicationMetadataQuery();
   const { data: layoutSets, isError: hasLayoutSetError } = useLayoutSetsQuery();
@@ -51,7 +47,7 @@ const AppStartup = (): JSX.Element => {
     isTextResourcesError;
 
   if (componentHasErrors) {
-    return <h1>Should display error page</h1>;
+    return <UnknownError />;
   }
 
   if (componentIsReady) {
@@ -59,29 +55,33 @@ const AppStartup = (): JSX.Element => {
       <AppInternal
         applicationSettings={applicationSettings}
         applicationMetadata={applicationMetadata}
+        layoutSets={layoutSets}
       />
     );
   }
 
-  return <h1>Should display spinner while loading the app</h1>;
+  // Display blank page while loading
+  return null;
 };
 
 type AppInternalProps = {
   applicationSettings: IApplicationSettings;
   applicationMetadata: IApplicationMetadata;
+  layoutSets: ILayoutSets;
 };
-const AppInternal = ({ applicationSettings, applicationMetadata }: AppInternalProps): JSX.Element | null => {
+const AppInternal = ({
+  applicationSettings,
+  applicationMetadata,
+  layoutSets,
+}: AppInternalProps): JSX.Element | null => {
   const dispatch = useAppDispatch();
-  const hasErrorSelector = makeGetHasErrorsSelector();
-  const hasApiErrors: boolean = useAppSelector(hasErrorSelector);
-  const appOidcProvider = applicationSettings.appOidcProvider;
-  const lastRefreshTokenTimestamp = React.useRef(0);
 
-  const allowAnonymousSelector = makeGetAllowAnonymousSelector();
-  const allowAnonymous: boolean = useAppSelector(allowAnonymousSelector);
-
+  const allowAnonymous = useGetAllowAnonymous(applicationMetadata, layoutSets);
   const appName = useAppSelector(selectAppName);
   const appOwner = useAppSelector(selectAppOwner);
+  useProfileQuery(allowAnonymous === false);
+  useKeepAlive(applicationSettings.appOidcProvider, allowAnonymous);
+  useUpdatePdfState(allowAnonymous);
 
   // Set the title of the app
   React.useEffect(() => {
@@ -95,65 +95,19 @@ const AppInternal = ({ applicationSettings, applicationMetadata }: AppInternalPr
   }, [appOwner, appName]);
 
   React.useEffect(() => {
-    function setUpEventListeners() {
-      window.addEventListener('mousemove', refreshJwtToken);
-      window.addEventListener('scroll', refreshJwtToken);
-      window.addEventListener('onfocus', refreshJwtToken);
-      window.addEventListener('keydown', refreshJwtToken);
-      window.addEventListener('hashchange', setPdfState);
-    }
-
-    function removeEventListeners() {
-      window.removeEventListener('mousemove', refreshJwtToken);
-      window.removeEventListener('scroll', refreshJwtToken);
-      window.removeEventListener('onfocus', refreshJwtToken);
-      window.removeEventListener('keydown', refreshJwtToken);
-      window.removeEventListener('hashchange', setPdfState);
-    }
-
-    function setPdfState() {
-      if (shouldGeneratePdf()) {
-        dispatch(PdfActions.pdfStateChanged());
-      }
-    }
-
-    function refreshJwtToken() {
-      const timeNow = Date.now();
-      if (timeNow - lastRefreshTokenTimestamp.current > TEN_MINUTE_IN_MILLISECONDS) {
-        lastRefreshTokenTimestamp.current = timeNow;
-        httpGet(refreshJwtTokenUrl).catch((err) => {
-          // Most likely the user has an expired token, so we redirect to the login-page
-          try {
-            window.location.href = getEnvironmentLoginUrl(appOidcProvider || null);
-          } catch (error) {
-            console.error(err, error);
-          }
-        });
-      }
-    }
-
     if (allowAnonymous === false) {
-      refreshJwtToken();
       dispatch(QueueActions.startInitialUserTaskQueue());
-      setUpEventListeners();
-
-      return () => {
-        removeEventListeners();
-      };
     }
-  }, [allowAnonymous, dispatch, appOidcProvider]);
+  }, [allowAnonymous, dispatch]);
 
+  // This useEffect can be removed when we have migrated to React Query
   React.useEffect(() => {
     dispatch(QueueActions.startInitialAppTaskQueue());
   }, [dispatch]);
 
-  if (hasApiErrors) {
-    return <UnknownError />;
-  }
-
-  // Page is ready to be rendered once allowAnonymous value has been determined
-  const ready = allowAnonymous !== undefined;
-  if (!ready) {
+  // Ready to be rendered once allowAnonymous value has been determined
+  const isPageReadyToRender = allowAnonymous !== undefined;
+  if (!isPageReadyToRender) {
     return null;
   }
   return (
