@@ -7,7 +7,7 @@ import { useAppDispatch } from 'src/hooks/useAppDispatch';
 import type { ILayoutSets } from 'src/types';
 
 enum ServerStateCacheKey {
-  LayoutSets = 'LAYOUT_SETS',
+  LayoutSets = 'layoutSets',
 }
 export const useLayoutSetsQuery = (): UseQueryResult<ILayoutSets> => {
   const dispatch = useAppDispatch();

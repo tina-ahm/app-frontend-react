@@ -7,13 +7,13 @@ import { useAppDispatch } from 'src/hooks/useAppDispatch';
 import type { IApplicationMetadata } from 'src/features/applicationMetadata';
 
 enum ServerStateCacheKey {
-  ApplicationMetadata = 'ApplicationMetadata',
+  GetApplicationMetadata = 'getApplicationMetadata',
 }
 
 export const useApplicationMetadataQuery = (): UseQueryResult<IApplicationMetadata, unknown> => {
   const dispatch = useAppDispatch();
   const { fetchApplicationMetadata } = useAppServicesContext();
-  return useQuery([ServerStateCacheKey.ApplicationMetadata], fetchApplicationMetadata, {
+  return useQuery([ServerStateCacheKey.GetApplicationMetadata], fetchApplicationMetadata, {
     onSuccess: (applicationMetadata) => {
       dispatch(ApplicationMetadataActions.getFulfilled({ applicationMetadata }));
     },

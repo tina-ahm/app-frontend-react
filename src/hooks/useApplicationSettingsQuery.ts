@@ -7,13 +7,13 @@ import { useAppDispatch } from 'src/hooks/useAppDispatch';
 import type { IApplicationSettings } from 'src/types/shared';
 
 enum ServerStateCacheKey {
-  ApplicationSettings = 'APPLICATION_SETTINGS',
+  GetApplicationSettings = 'getApplicationSettings',
 }
 
 export const useApplicationSettingsQuery = (): UseQueryResult<IApplicationSettings, unknown> => {
   const dispatch = useAppDispatch();
   const { fetchApplicationSettings } = useAppServicesContext();
-  return useQuery([ServerStateCacheKey.ApplicationSettings], fetchApplicationSettings, {
+  return useQuery([ServerStateCacheKey.GetApplicationSettings], fetchApplicationSettings, {
     onSuccess: (settings) => {
       dispatch(ApplicationSettingsActions.fetchApplicationSettingsFulfilled({ settings }));
     },

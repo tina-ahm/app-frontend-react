@@ -7,7 +7,7 @@ import { useAppDispatch } from 'src/hooks/useAppDispatch';
 import type { IFooterLayout } from 'src/features/footer/types';
 
 enum ServerStateCacheKey {
-  FetchFooterLayout = 'GET_FOOTER_LAYOUT',
+  FetchFooterLayout = 'fetchFooterLayout',
 }
 
 export const useFooterLayoutQuery = (enabled?: boolean): UseQueryResult<IFooterLayout> => {

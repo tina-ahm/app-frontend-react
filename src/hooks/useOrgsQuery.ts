@@ -6,10 +6,14 @@ import { OrgsActions } from 'src/features/orgs/orgsSlice';
 import { useAppDispatch } from 'src/hooks/useAppDispatch';
 import type { IAltinnOrgs } from 'src/types/shared';
 
+enum ServerStateCacheKey {
+  GetOrganizations = 'GetOrganizations',
+}
+
 export const useOrgsQuery = (): UseQueryResult<IAltinnOrgs> => {
   const dispatch = useAppDispatch();
   const { fetchOrgs } = useAppServicesContext();
-  return useQuery([], fetchOrgs, {
+  return useQuery([ServerStateCacheKey.GetOrganizations], fetchOrgs, {
     onSuccess: (orgs) => {
       dispatch(OrgsActions.fetchFulfilled({ orgs }));
     },

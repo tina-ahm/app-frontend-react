@@ -7,7 +7,7 @@ import { useAppDispatch } from 'src/hooks/useAppDispatch';
 import type { ISimpleInstance } from 'src/types';
 
 enum ServerStateCacheKey {
-  getActiveInstances = 'GET_ACTIVE_INSTANCES',
+  GetActiveInstances = 'getActiveInstances',
 }
 
 export const useActiveInstancesQuery = (
@@ -16,7 +16,7 @@ export const useActiveInstancesQuery = (
 ): UseQueryResult<ISimpleInstance[], unknown> => {
   const dispatch = useAppDispatch();
   const { fetchActiveInstances } = useAppServicesContext();
-  return useQuery([ServerStateCacheKey.getActiveInstances], () => fetchActiveInstances(partyId), {
+  return useQuery([ServerStateCacheKey.GetActiveInstances], () => fetchActiveInstances(partyId), {
     enabled,
     onSuccess: (instanceData) => {
       dispatch(InstanceDataActions.getFulfilled({ instanceData }));
