@@ -74,6 +74,7 @@ function* runValidations(field: string, data: any, componentId: string | undefin
     instance: state.instanceData.instance,
     layoutSets: state.formLayout.layoutsets,
   });
+  console.log('run', { currentDataTypeId }, state.formDataModel.schemas);
   const validator = getValidator(currentDataTypeId, state.formDataModel.schemas);
   const component = getLayoutComponentById(componentId, state.formLayout.layouts);
 

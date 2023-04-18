@@ -9,7 +9,7 @@ export interface IIsLoadingState {
 }
 
 export const initialState: IIsLoadingState = {
-  dataTask: null,
+  dataTask: false,
   stateless: null,
 };
 
@@ -21,7 +21,7 @@ export const isLoadingSlice = () => {
     actions: {
       startDataTaskIsLoading: mkAction<void>({
         reducer: (state) => {
-          state.dataTask = true;
+          state.dataTask = false;
         },
       }),
       finishDataTaskIsLoading: mkAction<void>({
@@ -32,7 +32,7 @@ export const isLoadingSlice = () => {
       }),
       startStatelessIsLoading: mkAction<void>({
         reducer: (state) => {
-          state.stateless = true;
+          state.stateless = false;
         },
       }),
       finishStatelessIsLoading: mkAction<void>({

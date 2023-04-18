@@ -17,18 +17,36 @@ import { useApiErrorCheck } from 'src/hooks/useApiErrorCheck';
 import { useAppSelector } from 'src/hooks/useAppSelector';
 import { useInstanceIdParams } from 'src/hooks/useInstanceIdParams';
 import { useInstanceQuery } from 'src/hooks/useInstanceQuery';
+import { useProcessedLayoutQuery } from 'src/hooks/useLayoutQuery';
 import { useProcess } from 'src/hooks/useProcess';
 import { ProcessTaskType } from 'src/types';
+import { getLayoutSetIdForApplication } from 'src/utils/appMetadata';
 import { behavesLikeDataTask } from 'src/utils/formLayout';
+import type { IApplicationMetadata } from 'src/features/applicationMetadata';
 
 export const ProcessWrapper = () => {
   const instantiating = useAppSelector((state) => state.instantiation.instantiating);
+  const instance = useAppSelector((state) => state.instanceData.instance);
+  const instanceId = useAppSelector((state) => state.instantiation.instanceId);
+  const applicationMetadata = useAppSelector((state) => state.applicationMetadata.applicationMetadata);
+
   const isLoading = useAppSelector((state) => state.isLoading.dataTask);
   const layoutSets = useAppSelector((state) => state.formLayout.layoutsets);
+  const layoutSetId = getLayoutSetIdForApplication(
+    applicationMetadata || ({} as IApplicationMetadata),
+    instance,
+    layoutSets,
+  );
+
+  const { isError: isLayoutQueryError } = useProcessedLayoutQuery({
+    applicationMetadataId: applicationMetadata?.id,
+    layoutSetId,
+    instanceId,
+  });
+
   const { hasApiErrors } = useApiErrorCheck();
   const { process, appOwner, appName } = useProcess();
 
-  const instanceId = useAppSelector((state) => state.instantiation.instanceId);
   const instanceIdFromUrl = useInstanceIdParams()?.instanceId;
 
   // TODO should error handle this?
@@ -40,7 +58,7 @@ export const ProcessWrapper = () => {
   const renderPDF = searchParams.get('pdf') === '1';
   const previewPDF = searchParams.get('pdf') === 'preview';
 
-  if (hasApiErrors) {
+  if (hasApiErrors || isLayoutQueryError) {
     return <UnknownError />;
   }
 

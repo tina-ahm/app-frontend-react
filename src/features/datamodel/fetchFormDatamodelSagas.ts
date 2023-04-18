@@ -1,10 +1,8 @@
 import { all, call, put, select, take } from 'redux-saga/effects';
 import type { SagaIterator } from 'redux-saga';
 
-import { ApplicationMetadataActions } from 'src/features/applicationMetadata/applicationMetadataSlice';
 import { DataModelActions } from 'src/features/datamodel/datamodelSlice';
 import { InstanceDataActions } from 'src/features/instanceData/instanceDataSlice';
-import { FormLayoutActions } from 'src/features/layout/formLayoutSlice';
 import { QueueActions } from 'src/features/queue/queueSlice';
 import { getCurrentDataTypeForApplication, isStatelessApp } from 'src/utils/appMetadata';
 import { httpGet } from 'src/utils/network/networking';
@@ -41,11 +39,11 @@ function* fetchJsonSchemaSaga(): SagaIterator {
 }
 
 export function* watchFetchJsonSchemaSaga(): SagaIterator {
-  yield all([
-    take(ApplicationMetadataActions.getFulfilled),
-    take(FormLayoutActions.fetchSetsFulfilled),
-    take(DataModelActions.fetchJsonSchema),
-  ]);
+  // yield all([
+  //   take(ApplicationMetadataActions.getFulfilled),
+  //   take(FormLayoutActions.fetchSetsFulfilled),
+  //   take(DataModelActions.fetchJsonSchema),
+  // ]);
   const application: IApplicationMetadata = yield select(
     (state: IRuntimeState) => state.applicationMetadata.applicationMetadata,
   );

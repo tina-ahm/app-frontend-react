@@ -1,9 +1,7 @@
-import { all, call, put, select, take, takeLatest } from 'redux-saga/effects';
+import { call, put, select, takeLatest } from 'redux-saga/effects';
 import type { SagaIterator } from 'redux-saga';
 
-import { ApplicationMetadataActions } from 'src/features/applicationMetadata/applicationMetadataSlice';
 import { LanguageActions } from 'src/features/language/languageSlice';
-import { FormLayoutActions } from 'src/features/layout/formLayoutSlice';
 import { ProfileActions } from 'src/features/profile/profileSlice';
 import { QueueActions } from 'src/features/queue/queueSlice';
 import { getLanguageFromCode } from 'src/language/languages';
@@ -23,12 +21,6 @@ export function* fetchLanguageSaga(defaultLanguage = false): SagaIterator {
 }
 
 export function* watchFetchLanguageSaga(): SagaIterator {
-  yield all([
-    take(FormLayoutActions.fetchSetsFulfilled),
-    take(ApplicationMetadataActions.getFulfilled),
-    take(LanguageActions.fetchLanguage),
-  ]);
-
   const allowAnonymous = yield select(makeGetAllowAnonymousSelector());
   if (!allowAnonymous) {
     // The currently selected language in the profile is preset to 'nb' when this state is initialized, so we

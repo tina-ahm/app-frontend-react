@@ -7,7 +7,7 @@ import { useAppDispatch } from 'src/hooks/useAppDispatch';
 import type { IAltinnOrgs } from 'src/types/shared';
 
 enum ServerStateCacheKey {
-  GetOrganizations = 'GetOrganizations',
+  GetOrganizations = 'getOrganizations',
 }
 
 export const useOrgsQuery = (): UseQueryResult<IAltinnOrgs> => {

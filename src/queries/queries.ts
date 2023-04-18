@@ -7,6 +7,7 @@ import {
   getActiveInstancesUrl,
   getFooterLayoutUrl,
   getLayoutSetsUrl,
+  getLayoutsUrl,
   getPartyValidationUrl,
   getProcessStateUrl,
   instancesControllerUrl,
@@ -37,10 +38,11 @@ export const fetchInstanceByInstanceId = (instanceId: string): Promise<IInstance
   httpGet(`${instancesControllerUrl}/${instanceId}`);
 export const fetchLayoutSets = (): Promise<ILayoutSets> => httpGet(getLayoutSetsUrl());
 export const fetchProcess = (): Promise<IProcess> => httpGet(getProcessStateUrl());
-export const fetchTextResources = (appLanguage: string, shouldUseDeprecatedEndpoint = false) => {
-  if (shouldUseDeprecatedEndpoint) {
+export const fetchTextResources = (appLanguage: string, shouldUseLegacyEndpoint = false) => {
+  if (shouldUseLegacyEndpoint) {
     return httpGet(oldTextResourcesUrl);
   }
   return httpGet(textResourcesUrl(appLanguage));
 };
 export const fetchCurrentParty = () => httpGet(currentPartyUrl);
+export const fetchLayout = (layoutSetId: string) => httpGet(getLayoutsUrl(layoutSetId));
