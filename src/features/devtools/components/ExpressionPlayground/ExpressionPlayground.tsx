@@ -74,7 +74,7 @@ export const ExpressionPlayground = () => {
 
       const dataSources = dataSourcesFromState(state);
       const out = evalExpr(expr as Expression, layout, dataSources, { config });
-      setOutput(out);
+      setOutput(JSON.stringify(out));
       setIsError(false);
     } catch (e) {
       setOutput(e.message);
@@ -89,12 +89,14 @@ export const ExpressionPlayground = () => {
           className={cn(classes.textbox, classes.input)}
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          placeholder={'Expression to evaluate. Example:\n["equals", ["component", "foo"], "bar"]'}
         />
         <textarea
           style={{ color: isError ? 'red' : 'black' }}
           className={cn(classes.textbox, classes.output)}
           readOnly={true}
           value={output}
+          placeholder={'Result of evaluation'}
         />
       </SplitView>
     </div>
