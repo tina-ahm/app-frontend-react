@@ -1,9 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
 
-import { ProcessWrapper } from 'src/components/wrappers/ProcessWrapper';
-import { Entrypoint } from 'src/features/entrypoint/Entrypoint';
-import { PartySelection } from 'src/features/instantiate/containers/PartySelection';
 import { UnknownError } from 'src/features/instantiate/containers/UnknownError';
 import { QueueActions } from 'src/features/queue/queueSlice';
 import { useApplicationMetadataQuery } from 'src/hooks/queries/useApplicationMetadataQuery';
@@ -19,6 +15,7 @@ import { useKeepAlive } from 'src/hooks/useKeepAlive';
 import { useUpdatePdfState } from 'src/hooks/useUpdatePdfState';
 import { makeGetAllowAnonymousSelector } from 'src/selectors/getAllowAnonymous';
 import { selectAppName, selectAppOwner } from 'src/selectors/language';
+import { AltinnRouter, isLegacyUrl, redirectLegacyToNewUrl } from 'src/utils/altinnRouter';
 import type { IApplicationSettings } from 'src/types/shared';
 
 export const App = () => {
@@ -79,25 +76,25 @@ const AppInternal = ({ applicationSettings }: AppInternalProps): JSX.Element | n
     }
   }, [appOwner, appName]);
 
+  // TODO should this be decided by the application settings?
+  const shouldUseLegacyRouter = false;
+
+  if (!shouldUseLegacyRouter) {
+    const isUrlLegacy = isLegacyUrl(window.location.hash);
+
+    if (isUrlLegacy) {
+      redirectLegacyToNewUrl(window.location.hash);
+      return null;
+    }
+  }
+
   const isReadyToRenderRoutes = allowAnonymous !== undefined;
   if (isReadyToRenderRoutes) {
     return (
-      <>
-        <Routes>
-          <Route
-            path='/'
-            element={<Entrypoint allowAnonymous={allowAnonymous} />}
-          />
-          <Route
-            path='/partyselection/*'
-            element={<PartySelection />}
-          />
-          <Route
-            path='/instance/:partyId/:instanceGuid'
-            element={<ProcessWrapper />}
-          />
-        </Routes>
-      </>
+      <AltinnRouter
+        allowAnonymous={allowAnonymous}
+        shouldUseLegacyRouter={shouldUseLegacyRouter}
+      />
     );
   }
 

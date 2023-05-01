@@ -5,7 +5,6 @@ import 'core-js';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { HashRouter } from 'react-router-dom';
 
 import { AppWrapper } from '@altinn/altinn-design-system';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -40,23 +39,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const root = container && createRoot(container);
   root?.render(
     <Provider store={store}>
-      <HashRouter>
-        <AppWrapper>
-          <ThemeWrapper>
-            <ErrorBoundary>
-              <QueryClientProvider client={queryClient}>
-                <AppQueriesContextProvider {...queries}>
-                  <ExprContextWrapper>
-                    <DevTools>
-                      <App />
-                    </DevTools>
-                  </ExprContextWrapper>
-                </AppQueriesContextProvider>
-              </QueryClientProvider>
-            </ErrorBoundary>
-          </ThemeWrapper>
-        </AppWrapper>
-      </HashRouter>
+      <AppWrapper>
+        <ThemeWrapper>
+          <ErrorBoundary>
+            <QueryClientProvider client={queryClient}>
+              <AppQueriesContextProvider {...queries}>
+                <ExprContextWrapper>
+                  <DevTools>
+                    <App />
+                  </DevTools>
+                </ExprContextWrapper>
+              </AppQueriesContextProvider>
+            </QueryClientProvider>
+          </ErrorBoundary>
+        </ThemeWrapper>
+      </AppWrapper>
     </Provider>,
   );
 });
