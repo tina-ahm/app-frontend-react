@@ -1,39 +1,20 @@
 import React from 'react';
-import type { ChangeEventHandler, FocusEventHandler } from 'react';
-
-import { RadioGroup, RadioGroupVariant } from '@digdir/design-system-react';
 
 import { AltinnSpinner } from 'src/components/AltinnSpinner';
 import { OptionalIndicator } from 'src/components/form/OptionalIndicator';
+import { RadioButton } from 'src/components/form/RadioButton';
+import { RadioGroup } from 'src/components/form/RadioGroup';
 import { RequiredIndicator } from 'src/components/form/RequiredIndicator';
+import { useRadioButtons } from 'src/layout/RadioButtons/radioButtonsUtils';
 import { shouldUseRowLayout } from 'src/utils/layout';
 import type { IRadioButtonsContainerProps } from 'src/layout/RadioButtons/RadioButtonsContainerComponent';
-import type { IOption } from 'src/types';
 
-export interface IControlledRadioGroupProps extends IRadioButtonsContainerProps {
-  fetchingOptions: boolean | undefined;
-  selected: string | undefined;
-  handleBlur: FocusEventHandler<HTMLInputElement | HTMLButtonElement | HTMLDivElement>;
-  handleChange: ChangeEventHandler<HTMLInputElement | HTMLButtonElement>;
-  handleChangeRadioGroup: (value: string) => void;
-  calculatedOptions: IOption[];
-}
+export type IControlledRadioGroupProps = IRadioButtonsContainerProps;
 
-export const ControlledRadioGroup = ({
-  node,
-  getTextResource,
-  fetchingOptions,
-  selected,
-  text,
-  language,
-  handleBlur,
-  handleChangeRadioGroup,
-  calculatedOptions,
-  isValid,
-  overrideDisplay,
-  getTextResourceAsString,
-}: IControlledRadioGroupProps) => {
-  const { id, layout, readOnly, textResourceBindings, required, labelSettings } = node.item;
+export const ControlledRadioGroup = (props: IControlledRadioGroupProps) => {
+  const { node, getTextResource, text, language, isValid, overrideDisplay, getTextResourceAsString } = props;
+  const { id, layout, readOnly, textResourceBindings, required, labelSettings, showAsCard } = node.item;
+  const { selected, handleChange, handleBlur, fetchingOptions, calculatedOptions } = useRadioButtons(props);
 
   const labelText = (
     <span style={{ fontSize: '1rem', wordBreak: 'break-word' }}>
@@ -62,37 +43,30 @@ export const ControlledRadioGroup = ({
           onBlur={handleBlur}
         >
           <RadioGroup
-            name={id}
-            aria-labelledby={`${id}-label`}
             legend={overrideDisplay?.renderLegend === false ? null : labelText}
             description={textResourceBindings?.description && getTextResource(textResourceBindings.description)}
-            value={selected}
-            error={!isValid}
-            fieldSetProps={{
-              'aria-label': overrideDisplay?.renderedInTable
-                ? getTextResourceAsString(textResourceBindings?.title)
-                : undefined,
-            }}
             helpText={textResourceBindings?.help && getTextResource(textResourceBindings.help)}
-            disabled={readOnly}
-            variant={
-              shouldUseRowLayout({
-                layout,
-                optionsCount: calculatedOptions.length,
-              })
-                ? RadioGroupVariant.Horizontal
-                : RadioGroupVariant.Vertical
-            }
-            onChange={handleChangeRadioGroup}
-            items={calculatedOptions.map((option) => ({
-              value: option.value,
-              checkboxId: `${id}-${option.label.replace(/\s/g, '-')}`,
-              hideLabel,
-              label: hideLabel ? getTextResourceAsString(option.label) : getTextResource(option.label),
-              description: getTextResource(option.description),
-              helpText: option.helpText && getTextResource(option.helpText),
-            }))}
-          />
+            shouldDisplayHorizontally={shouldUseRowLayout({
+              layout,
+              optionsCount: calculatedOptions.length,
+            })}
+          >
+            {calculatedOptions.map((option) => (
+              <RadioButton
+                {...option}
+                label={hideLabel ? getTextResourceAsString(option.label) : getTextResource(option.label)}
+                name={id}
+                key={option.value}
+                checked={option.value === selected}
+                showAsCard={showAsCard}
+                error={!isValid}
+                disabled={readOnly}
+                onChange={handleChange}
+                hideLabel={hideLabel}
+                size='small'
+              />
+            ))}
+          </RadioGroup>
         </div>
       )}
     </div>
