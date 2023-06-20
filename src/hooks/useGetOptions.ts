@@ -2,10 +2,8 @@ import { useEffect, useState } from 'react';
 import { shallowEqual } from 'react-redux';
 
 import { useAppSelector } from 'src/hooks/useAppSelector';
-import { buildInstanceContext } from 'src/utils/instanceContext';
 import { getOptionLookupKey, getRelevantFormDataForOptionSource, setupSourceOptions } from 'src/utils/options';
 import type { IMapping, IOption, IOptionSource, ITextResource } from 'src/types';
-import type { IDataSources } from 'src/types/shared';
 
 interface IUseGetOptionsParams {
   optionsId: string | undefined;
@@ -14,7 +12,7 @@ interface IUseGetOptionsParams {
 }
 
 export interface IOptionResources {
-  label?: ITextResource;
+  label: ITextResource;
   description?: ITextResource;
   helpText?: ITextResource;
 }
@@ -30,7 +28,7 @@ export const useGetOptions = ({ optionsId, mapping, source }: IUseGetOptionsPara
     const resources = state.textResources.resources;
     const findResourceById = (id?: string) => resources.find((resource) => resource.id === id);
     return {
-      label: findResourceById(label),
+      label: findResourceById(label) as ITextResource,
       description: findResourceById(description),
       helpText: findResourceById(helpText),
     };
@@ -50,14 +48,6 @@ export const useGetOptions = ({ optionsId, mapping, source }: IUseGetOptionsPara
       return;
     }
 
-    const instanceContext = buildInstanceContext(instance);
-
-    const dataSources: IDataSources = {
-      dataModel: relevantFormData,
-      applicationSettings,
-      instanceContext,
-    };
-
     setOptions(
       setupSourceOptions({
         source,
@@ -68,7 +58,6 @@ export const useGetOptions = ({ optionsId, mapping, source }: IUseGetOptionsPara
         },
         relevantFormData,
         repeatingGroups,
-        dataSources,
       }),
     );
   }, [

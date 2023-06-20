@@ -18,7 +18,6 @@ import type {
   IRepeatingGroups,
   ITextResource,
 } from 'src/types';
-import type { IDataSources } from 'src/types/shared';
 
 export function getOptionLookupKey({ id, mapping }: IOptionsMetaData) {
   if (!mapping) {
@@ -104,7 +103,6 @@ interface ISetupSourceOptionsParams {
   relevantTextResources: IOptionResources;
   relevantFormData: IFormData;
   repeatingGroups: IRepeatingGroups | null;
-  dataSources: IDataSources;
 }
 
 /**
@@ -115,7 +113,6 @@ export function setupSourceOptions({
   relevantTextResources,
   relevantFormData,
   repeatingGroups = {},
-  dataSources,
 }: ISetupSourceOptionsParams) {
   const repeatingGroupsTest = repeatingGroups ?? {};
   /*  const replacedOptionLabels = relevantTextResources.label
@@ -148,8 +145,8 @@ export function setupSourceOptions({
     const option: IOption = {
       value: replaceOptionDataField(relevantFormData, source.value, i),
       label: `${relevantTextResources.label?.id}-${i}`,
-      description: `${relevantTextResources.description?.id}-${i}`,
-      helpText: `${relevantTextResources.helpText?.id}-${i}`,
+      description: relevantTextResources.description && `${relevantTextResources.description?.id}-${i}`,
+      helpText: relevantTextResources.helpText?.id && `${relevantTextResources.helpText?.id}-${i}`,
     };
     options.push(option);
   }
