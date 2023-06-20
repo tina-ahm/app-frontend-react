@@ -147,9 +147,9 @@ export function setupSourceOptions({
   for (let i = 0; i <= repeatingGroupIndex; i++) {
     const option: IOption = {
       value: replaceOptionDataField(relevantFormData, source.value, i),
-      label: `${relevantTextResources.label}-${i}`,
-      description: `${relevantTextResources.description}-${i}`,
-      helpText: `${relevantTextResources.helpText}-${i}`,
+      label: `${relevantTextResources.label?.id}-${i}`,
+      description: `${relevantTextResources.description?.id}-${i}`,
+      helpText: `${relevantTextResources.helpText?.id}-${i}`,
     };
     options.push(option);
   }
