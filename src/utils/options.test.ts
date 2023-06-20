@@ -7,7 +7,7 @@ import {
 import type { IFormData } from 'src/features/formData';
 import type { ILayout } from 'src/layout/layout';
 import type { IMapping, IOptions, IOptionSource, IRepeatingGroups } from 'src/types';
-import type { IDataSources, ITextResource } from 'src/types/shared';
+import type { ITextResource } from 'src/types/shared';
 
 describe('utils > options', () => {
   describe('getOptionLookupKey', () => {
@@ -222,16 +222,11 @@ describe('utils > options', () => {
         },
       };
 
-      const dataSources: IDataSources = {
-        dataModel: relevantFormData,
-      };
-
       const options = setupSourceOptions({
         source,
         relevantTextResources: { label: relevantTextResourceLabel },
         relevantFormData,
         repeatingGroups,
-        dataSources,
       });
 
       if (!options) {

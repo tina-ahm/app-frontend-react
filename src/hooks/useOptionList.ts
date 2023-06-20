@@ -30,9 +30,6 @@ export function useOptionList(component: ISelectionComponent): IOption[] {
         relevantTextResources: { label: relevantTextResourceLabel },
         relevantFormData: getRelevantFormDataForOptionSource(formData, component.source),
         repeatingGroups,
-        dataSources: {
-          dataModel: formData,
-        },
       });
     return reduxOptions || [];
   }
