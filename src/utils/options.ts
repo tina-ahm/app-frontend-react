@@ -1,8 +1,4 @@
-import {
-  getParsedLanguageFromText,
-  getTextResourceByKey,
-  replaceTextResourceParams,
-} from 'src/language/sharedLanguage';
+import { getParsedLanguageFromText, getTextResourceByKey } from 'src/language/sharedLanguage';
 import {
   getBaseGroupDataModelBindingFromKeyWithIndexIndicators,
   getGroupDataModelBinding,
@@ -118,10 +114,11 @@ export function setupSourceOptions({
   source,
   relevantTextResources,
   relevantFormData,
-  repeatingGroups,
+  repeatingGroups = {},
   dataSources,
 }: ISetupSourceOptionsParams) {
-  const replacedOptionLabels = relevantTextResources.label
+  const repeatingGroupsTest = repeatingGroups ?? {};
+  /*  const replacedOptionLabels = relevantTextResources.label
     ? replaceTextResourceParams([relevantTextResources.label], dataSources, repeatingGroups)
     : [];
   const replacedOptionDescriptions = relevantTextResources.description
@@ -129,8 +126,17 @@ export function setupSourceOptions({
     : [];
   const replacedOptionLabelsHelpTexts = relevantTextResources.helpText
     ? replaceTextResourceParams([relevantTextResources.helpText], dataSources, repeatingGroups)
-    : [];
+    : []; */
+  const variableForRepeatingGroup = relevantTextResources.label?.variables?.find(
+    (variable) => variable.key.indexOf('[{0}]') > -1,
+  );
 
+  const repeatingGroupId = Object.keys(repeatingGroupsTest).find((groupId) => {
+    const id = variableForRepeatingGroup?.key.split('[{0}]')[0];
+    return repeatingGroupsTest[groupId].dataModelBinding === id;
+  });
+
+  const repeatingGroupIndex = repeatingGroupId !== undefined ? repeatingGroupsTest[repeatingGroupId]?.index : 0;
   const repGroup = Object.values(repeatingGroups || {}).find((group) => group.dataModelBinding === source.group);
 
   if (!repGroup) {
@@ -138,16 +144,14 @@ export function setupSourceOptions({
   }
 
   const options: IOption[] = [];
-  for (let i = 0; i <= repGroup.index; i++) {
-    if (typeof replacedOptionLabels[i + 1]?.value !== 'undefined') {
-      const option: IOption = {
-        value: replaceOptionDataField(relevantFormData, source.value, i),
-        label: replacedOptionLabels[i + 1].value,
-        description: replacedOptionDescriptions[i + 1]?.value,
-        helpText: replacedOptionLabelsHelpTexts[i + 1]?.value,
-      };
-      options.push(option);
-    }
+  for (let i = 0; i <= repeatingGroupIndex; i++) {
+    const option: IOption = {
+      value: replaceOptionDataField(relevantFormData, source.value, i),
+      label: `${relevantTextResources.label}-${i}`,
+      description: `${relevantTextResources.description}-${i}`,
+      helpText: `${relevantTextResources.helpText}-${i}`,
+    };
+    options.push(option);
   }
   return options;
 }
