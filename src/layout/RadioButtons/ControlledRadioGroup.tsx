@@ -55,6 +55,8 @@ export const ControlledRadioGroup = (props: IControlledRadioGroupProps) => {
               <RadioButton
                 {...option}
                 label={hideLabel ? getTextResourceAsString(option.label) : getTextResource(option.label)}
+                description={getTextResource(option.description)}
+                helpText={getTextResource(option.helpText)}
                 name={id}
                 key={option.value}
                 checked={option.value === selected}
