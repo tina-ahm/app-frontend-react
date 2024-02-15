@@ -60,6 +60,8 @@
 .editingRow {
   border-top: 2px dotted var(--repeating-group-edit-border-color);
   background-color: var(--repeating-group-edit-surface-color);
+  z-index: 2;
+  position: relative;
 }
 
 .editingRow > td {
@@ -159,6 +161,8 @@
   display: inline-block;
   padding: var(--modal-padding-y) var(--modal-padding-x);
   box-sizing: border-box;
+  position: relative;
+  z-index: 2;
 }
 
 .nestedEditContainer {
@@ -167,6 +171,8 @@
   display: inline-block;
   padding: 12px 24px;
   box-sizing: border-box;
+  position: relative;
+  z-index: 2;
 }
 
 .hideTable {

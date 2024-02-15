@@ -25,7 +25,7 @@ export function RepeatingGroupTable(): React.JSX.Element | null {
   const rowsAfter = node.item.rowsAfter;
 
   const container = node.item;
-  const { textResourceBindings, labelSettings, id, edit, minCount } = container;
+  const { textResourceBindings, labelSettings, id, edit, minCount, stickyHeader } = container;
 
   const required = !!minCount && minCount > 0;
 
@@ -144,7 +144,7 @@ export function RepeatingGroupTable(): React.JSX.Element | null {
     >
       <Table
         id={`group-${id}-table`}
-        stickyHeader
+        stickyHeader={stickyHeader}
         className={cn(
           { [classes.editingBorder]: isNested, [classes.nestedTable]: isNested },
           classes.repeatingGroupTable,
