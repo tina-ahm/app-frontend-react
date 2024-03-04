@@ -18,7 +18,7 @@ exports[`SummaryGroupComponent SummaryGroupComponent -- should match snapshot 1`
       </span>
       <button
         aria-label="Change: Mock group"
-        class="fds-button-button-13ece2ef fds-utility-focusable-1bd8d932 fds-button-small-13ece2ef fds-button-tertiary-13ece2ef fds-button-second-13ece2ef editButton"
+        class="fds-button-button-c7ee1cc4 fds-utility-focusable-7600d88a fds-button-small-c7ee1cc4 fds-button-tertiary-c7ee1cc4 fds-button-second-c7ee1cc4 editButton"
         type="button"
       >
         Change
