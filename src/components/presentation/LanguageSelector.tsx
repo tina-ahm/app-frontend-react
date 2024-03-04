@@ -14,8 +14,9 @@ export const LanguageSelector = ({ hideLabel }: { hideLabel?: boolean }) => {
 
   const { data: appLanguages, isError: appLanguageError } = useGetAppLanguageQuery();
 
-  const handleAppLanguageChange = (languageCode: string) => {
-    setWithLanguageSelector(languageCode);
+  const handleValueChange = (selectedValues: string[]) => {
+    const language = selectedValues.at(0);
+    language && setWithLanguageSelector(language);
   };
 
   const optionsMap = useMemo(
@@ -37,7 +38,7 @@ export const LanguageSelector = ({ hideLabel }: { hideLabel?: boolean }) => {
       <div style={{ minWidth: 160 }}>
         <Combobox
           label={!hideLabel ? langAsString('language.selector.label') : undefined}
-          onChange={(value) => handleAppLanguageChange(value[0])}
+          onValueChange={handleValueChange}
           value={[selectedLanguage]}
         >
           {optionsMap?.map((option) => (

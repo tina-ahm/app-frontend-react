@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Button, LegacySelect } from '@digdir/design-system-react';
+import { Button, Combobox } from '@digdir/design-system-react';
 import { Grid } from '@material-ui/core';
 import { CheckmarkCircleFillIcon } from '@navikt/aksel-icons';
 
@@ -46,7 +46,8 @@ export function EditWindowComponent({ attachment, mobileView, node, options }: E
 
   const hasErrors = hasValidationErrors(attachmentValidations);
 
-  const onDropdownDataChange = (value: string) => {
+  const onDropdownDataChange = (selectedValues: string[]) => {
+    const value = selectedValues.at(0);
     if (value !== undefined) {
       const option = options?.find((o) => o.value === value);
       if (option !== undefined) {
@@ -86,6 +87,7 @@ export function EditWindowComponent({ attachment, mobileView, node, options }: E
 
   const saveIsDisabled = attachment.updating || !attachment.uploaded || readOnly;
   const uniqueId = isAttachmentUploaded(attachment) ? attachment.data.id : attachment.data.temporaryId;
+  const selectedValues = chosenOption?.value ? [chosenOption.value] : [];
 
   return (
     <div
@@ -170,16 +172,25 @@ export function EditWindowComponent({ attachment, mobileView, node, options }: E
             style={{ minWidth: '150px' }}
             xs
           >
-            <LegacySelect
-              inputId={`attachment-tag-dropdown-${uniqueId}`}
-              onChange={onDropdownDataChange}
-              options={formattedOptions}
+            <Combobox
+              id={`attachment-tag-dropdown-${uniqueId}`}
+              onValueChange={onDropdownDataChange}
               disabled={saveIsDisabled}
               error={hasErrors}
               label={langAsString('general.choose')}
               hideLabel={true}
-              value={chosenOption?.value}
-            />
+              value={selectedValues}
+            >
+              {formattedOptions?.map((option) => (
+                <Combobox.Option
+                  key={option.value}
+                  value={option.value}
+                  displayValue={option.label}
+                >
+                  {option.label}
+                </Combobox.Option>
+              ))}
+            </Combobox>
           </Grid>
           <Grid
             item={true}

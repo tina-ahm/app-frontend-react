@@ -2488,24 +2488,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@digdir/design-system-react@file:/Users/magnusrm/repos/designsystem/packages/react/digdir-design-system-react-0.51.1.tgz::locator=app-frontend-react%40workspace%3A.":
-  version: 0.51.1
-  resolution: "@digdir/design-system-react@file:/Users/magnusrm/repos/designsystem/packages/react/digdir-design-system-react-0.51.1.tgz#/Users/magnusrm/repos/designsystem/packages/react/digdir-design-system-react-0.51.1.tgz::hash=40e5a5&locator=app-frontend-react%40workspace%3A."
-  dependencies:
-    "@altinn/figma-design-tokens": "npm:^6.0.1"
-    "@digdir/design-system-tokens": "npm:^0.13.0"
-    "@floating-ui/react": "npm:0.26.4"
-    "@navikt/aksel-icons": "npm:^5.12.2"
-    "@radix-ui/react-slot": "npm:^1.0.2"
-    "@tanstack/react-virtual": "npm:^3.0.1"
-    react-number-format: "npm:5.3.1"
-  peerDependencies:
-    react: ">=18.2.0"
-    react-dom: ">=18.2.0"
-  checksum: e5b784c16d8834d7a88144956f89c2cdb519d377a0d2245e19495fa34792b451c9366936aab598a25eea43e91a0a8f03f53f1094637e277638fa8dfe0ca84a01
-  languageName: node
-  linkType: hard
-
 "@digdir/design-system-react@npm:0.16.0":
   version: 0.16.0
   resolution: "@digdir/design-system-react@npm:0.16.0"
@@ -2520,6 +2502,24 @@ __metadata:
     react: ">=16.8"
     react-dom: ">=16.8"
   checksum: d9b27b27e5c78b32ad4cbe6fb7ae75830c79b2a76727d8e16098e74703bc515e802caa1f1d81999ea378db1ad7b1fae9bcf847b7d96ecebb97b22d2d8145ddef
+  languageName: node
+  linkType: hard
+
+"@digdir/design-system-react@npm:^0.51.2":
+  version: 0.51.2
+  resolution: "@digdir/design-system-react@npm:0.51.2"
+  dependencies:
+    "@altinn/figma-design-tokens": "npm:^6.0.1"
+    "@digdir/design-system-tokens": "npm:^0.13.0"
+    "@floating-ui/react": "npm:0.26.4"
+    "@navikt/aksel-icons": "npm:^5.12.2"
+    "@radix-ui/react-slot": "npm:^1.0.2"
+    "@tanstack/react-virtual": "npm:^3.0.1"
+    react-number-format: "npm:5.3.1"
+  peerDependencies:
+    react: ">=18.2.0"
+    react-dom: ">=18.2.0"
+  checksum: 00c49587420c4540022699aee5773957da8ed718a9cb33b1b9d58c50f12d5ec9e3fff5f10701e5377dbbbe8f0741718d1a876cbf1b37164c2a3a58d2bcd9a504
   languageName: node
   linkType: hard
 
@@ -5913,7 +5913,7 @@ __metadata:
     "@babel/runtime": "npm:^7.21.0"
     "@babel/runtime-corejs3": "npm:^7.21.0"
     "@date-io/moment": "npm:1.3.13"
-    "@digdir/design-system-react": /Users/magnusrm/repos/designsystem/packages/react/digdir-design-system-react-0.51.1.tgz
+    "@digdir/design-system-react": "npm:^0.51.2"
     "@digdir/design-system-tokens": "npm:^0.13.0"
     "@material-ui/core": "npm:4.12.4"
     "@material-ui/pickers": "npm:3.3.11"

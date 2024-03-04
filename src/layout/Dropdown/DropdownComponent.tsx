@@ -32,9 +32,7 @@ export function DropdownComponent({ node, isValid, overrideDisplay }: IDropdownP
     <Combobox
       id={id}
       onValueChange={(newValue) => {
-        console.log('newValue', newValue);
-        console.log('optionstest', options);
-        setData(newValue[0] ?? []);
+        setData(newValue.at(0) ?? '');
       }}
       value={current ? [current?.value] : []}
       onBlur={debounce}

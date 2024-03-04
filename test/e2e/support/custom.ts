@@ -36,10 +36,17 @@ Cypress.Commands.add('dsUncheck', { prevSubject: true }, (subject: JQueryWithSel
 
 Cypress.Commands.add('dsSelect', (selector, value) => {
   cy.log(`Selecting ${value} in ${selector}`);
+  /**
+   * TODO:
+   * Race conditions are easily caused by changing some form data affected by options mapping
+   * right before triggering dsSelect.
+   * This can cause the component to start loading after the click event has been triggered.
+   * Waiting for network idle before clicking is a workaround, but can be uneccessarily slow.
+   */
+  cy.waitForNetworkIdle(400);
   cy.get(selector).should('not.be.disabled');
   cy.get(selector).click();
-  cy.findByRole('option', { name: value }).click();
-  cy.get('body').click();
+  cy.findByRole('option', { name: value }).clickAndGone();
 });
 
 Cypress.Commands.add('clickAndGone', { prevSubject: true }, (subject: JQueryWithSelector | undefined) => {
