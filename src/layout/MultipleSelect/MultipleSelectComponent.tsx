@@ -1,22 +1,18 @@
 import React from 'react';
 
-import { LegacySelect } from '@digdir/design-system-react';
+import { Combobox } from '@digdir/design-system-react';
 
 import { FD } from 'src/features/formData/FormDataWrite';
+import { Lang } from 'src/features/language/Lang';
 import { useLanguage } from 'src/features/language/useLanguage';
 import { useGetOptions } from 'src/features/options/useGetOptions';
-import { useFormattedOptions } from 'src/hooks/useFormattedOptions';
 import type { PropsFromGenericComponent } from 'src/layout';
 
 export type IMultipleSelectProps = PropsFromGenericComponent<'MultipleSelect'>;
 export function MultipleSelectComponent({ node, isValid, overrideDisplay }: IMultipleSelectProps) {
   const { id, readOnly, textResourceBindings } = node.item;
   const debounce = FD.useDebounceImmediately();
-  const {
-    options: calculatedOptions,
-    currentStringy,
-    setData,
-  } = useGetOptions({
+  const { options, currentStringy, setData } = useGetOptions({
     ...node.item,
     node,
     removeDuplicates: true,
@@ -24,22 +20,30 @@ export function MultipleSelectComponent({ node, isValid, overrideDisplay }: IMul
   });
   const { langAsString } = useLanguage();
 
-  const formattedOptions = useFormattedOptions(calculatedOptions, true);
-
   return (
-    <LegacySelect
-      label={langAsString('general.choose')}
-      hideLabel={true}
-      options={formattedOptions}
-      deleteButtonLabel={langAsString('general.delete')}
+    <Combobox
+      id={id}
       multiple
-      inputId={id}
+      virtual
+      value={currentStringy}
+      onValueChange={(value) => setData(value)}
+      onBlur={debounce}
       disabled={readOnly}
       error={!isValid}
-      onChange={setData}
-      onBlur={debounce}
-      value={currentStringy}
+      label={langAsString('general.choose')}
+      hideLabel={true}
       aria-label={overrideDisplay?.renderedInTable ? langAsString(textResourceBindings?.title) : undefined}
-    />
+    >
+      {options.map((option) => (
+        <Combobox.Option
+          key={option.value}
+          value={option.value}
+          displayValue={langAsString(option?.label)}
+          description={langAsString(option.description)}
+        >
+          <Lang id={option?.label} />
+        </Combobox.Option>
+      ))}
+    </Combobox>
   );
 }

@@ -212,9 +212,9 @@ describe('DropdownComponent', () => {
     await userEvent.click(await screen.findByRole('combobox'));
     const options = await screen.findAllByRole('option');
 
-    expect(options[0]).toHaveValue('norway');
-    expect(options[1]).toHaveValue('sweden');
-    expect(options[2]).toHaveValue('denmark');
+    expect(options[0]).toHaveAccessibleName('Norway');
+    expect(options[1]).toHaveAccessibleName('Sweden');
+    expect(options[2]).toHaveAccessibleName('Denmark');
   });
 
   it('should present the provided options list sorted alphabetically in ascending order when providing sortOrder "asc"', async () => {
@@ -229,9 +229,9 @@ describe('DropdownComponent', () => {
     await userEvent.click(await screen.findByRole('combobox'));
     const options = await screen.findAllByRole('option');
 
-    expect(options[0]).toHaveValue('denmark');
-    expect(options[1]).toHaveValue('norway');
-    expect(options[2]).toHaveValue('sweden');
+    expect(options[0]).toHaveAccessibleName('Denmark');
+    expect(options[1]).toHaveAccessibleName('Norway');
+    expect(options[2]).toHaveAccessibleName('Sweden');
   });
 
   it('should present the provided options list sorted alphabetically in descending order when providing sortOrder "desc"', async () => {
@@ -246,9 +246,9 @@ describe('DropdownComponent', () => {
     await userEvent.click(await screen.findByRole('combobox'));
     const options = await screen.findAllByRole('option');
 
-    expect(options[0]).toHaveValue('sweden');
-    expect(options[1]).toHaveValue('norway');
-    expect(options[2]).toHaveValue('denmark');
+    expect(options[0]).toHaveAccessibleName('Sweden');
+    expect(options[1]).toHaveAccessibleName('Norway');
+    expect(options[2]).toHaveAccessibleName('Denmark');
   });
 
   it.each([

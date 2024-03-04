@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { LegacySelect } from '@digdir/design-system-react';
+import { Combobox } from '@digdir/design-system-react';
 
 import { AltinnSpinner } from 'src/components/AltinnSpinner';
 import { useCurrentLanguage, useSetCurrentLanguage } from 'src/features/language/LanguageProvider';
@@ -35,12 +35,21 @@ export const LanguageSelector = ({ hideLabel }: { hideLabel?: boolean }) => {
   if (appLanguages) {
     return (
       <div style={{ minWidth: 160 }}>
-        <LegacySelect
+        <Combobox
           label={!hideLabel ? langAsString('language.selector.label') : undefined}
-          options={optionsMap || []}
-          onChange={(value) => handleAppLanguageChange(value)}
-          value={selectedLanguage}
-        />
+          onChange={(value) => handleAppLanguageChange(value[0])}
+          value={[selectedLanguage]}
+        >
+          {optionsMap?.map((option) => (
+            <Combobox.Option
+              key={option.value}
+              value={option.value}
+              displayValue={option.label}
+            >
+              {option.label}
+            </Combobox.Option>
+          ))}
+        </Combobox>
       </div>
     );
   }
