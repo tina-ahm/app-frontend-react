@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import {
   AttributionControl,
+  FeatureGroup,
   GeoJSON,
   MapContainer,
   Marker,
@@ -9,12 +10,14 @@ import {
   useMapEvent,
   WMSTileLayer,
 } from 'react-leaflet';
+import { EditControl } from 'react-leaflet-draw';
 
 import cn from 'classnames';
 import { icon, type Map as LeafletMap, marker } from 'leaflet';
 import Icon from 'leaflet/dist/images/marker-icon.png';
 import RetinaIcon from 'leaflet/dist/images/marker-icon-2x.png';
 import IconShadow from 'leaflet/dist/images/marker-shadow.png';
+import type L from 'leaflet';
 
 import { useIsPdf } from 'src/hooks/useIsPdf';
 import classes from 'src/layout/Map/MapComponent.module.css';
@@ -44,10 +47,7 @@ function MapClickHandler({ onClick }: { onClick: (location: Location) => void })
   useMapEvent('click', (event) => {
     if (!event.originalEvent.defaultPrevented) {
       const location = event.latlng.wrap();
-      onClick({
-        latitude: location.lat,
-        longitude: location.lng,
-      });
+      onClick({ latitude: location.lat, longitude: location.lng });
     }
   });
 
@@ -59,6 +59,7 @@ type MapProps = {
   markerLocation?: Location;
   setMarkerLocation?: (location: Location) => void;
   geometries?: RawGeometry[];
+  userDefinedGeometries?: RawGeometry[];
   isSummary?: boolean;
   className?: string;
 };
@@ -69,6 +70,7 @@ export function Map({
   markerLocation,
   setMarkerLocation,
   geometries: rawGeometries,
+  userDefinedGeometries: rawUserDefinedGeometries,
   className,
 }: MapProps) {
   const map = useRef<LeafletMap | null>(null);
@@ -115,6 +117,48 @@ export function Map({
     }
   }, [bounds, isSummary]);
 
+  const editRef = useRef<L.FeatureGroup>(null);
+
+  /* const onShapeDrawn = (e) => {
+    e.layer.on('click', () => {
+      //editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable();
+    });
+    e.layer.on('contextmenu', () => {
+      //do some contextmenu action here
+    });
+    e.layer.bindTooltip('Text', {
+      className: 'leaflet-draw-tooltip:before leaflet-draw-tooltip leaflet-draw-tooltip-visible',
+      sticky: true,
+      direction: 'right',
+    });
+  }; */
+
+  /* React.useEffect(() => {
+    if (editRef.current?.getLayers().length === 0 && geojson) {
+      L.geoJSON(geojson).eachLayer((layer) => {
+        if (
+          layer instanceof L.Marker
+        ) {
+          if (layer?.feature?.properties.radius && ref.current) {
+            new L.Circle(layer.feature.geometry.coordinates.slice().reverse(), {
+              radius: layer.feature?.properties.radius,
+            }).addTo(ref.current);
+          } else {
+            ref.current?.addLayer(layer);
+          }
+        }
+      });
+    }
+  }, [geojson]);
+
+  const onShapeDrawn = () => {
+    const geo = editRef.current?.toGeoJSON();
+    console.log(geo);
+    if (geo?.type === 'FeatureCollection') {
+      setGeojson(geo);
+    }
+  };
+ */
   return (
     <MapContainer
       ref={map}
@@ -136,6 +180,21 @@ export function Map({
       scrollWheelZoom={isInteractive}
       attributionControl={false}
     >
+      <FeatureGroup ref={editRef}>
+        <EditControl
+          // ref={editRef}
+          position='topright'
+          // onCreated={onShapeDrawn}
+          draw={{
+            marker: true,
+            polyline: false,
+            rectangle: false,
+            circlemarker: false,
+            circle: false,
+            polygon: false,
+          }}
+        />
+      </FeatureGroup>
       {setMarkerLocation && isInteractive && <MapClickHandler onClick={setMarkerLocation} />}
       {layers.map((layer, i) =>
         layer.type === 'WMS' ? (
@@ -178,9 +237,7 @@ export function Map({
               content={label}
               interactive={isInteractive}
               direction={data.type == 'Point' ? 'bottom' : 'top'}
-              eventHandlers={{
-                click: (e) => e.originalEvent.preventDefault(),
-              }}
+              eventHandlers={{ click: (e) => e.originalEvent.preventDefault() }}
             />
           )}
         </GeoJSON>
