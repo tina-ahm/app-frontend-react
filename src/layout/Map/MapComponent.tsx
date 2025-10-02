@@ -29,7 +29,6 @@ export function MapComponent({ baseComponentId }: PropsFromGenericComponent<'Map
   const markerLocationIsValid = isLocationValid(markerLocation);
 
   const geometries = formData.geometries as RawGeometry[] | undefined;
-  const userDefinedGeometries = formData.userDefinedGeometries as RawGeometry[] | undefined;
 
   const setMarkerLocation = useCallback(
     ({ latitude, longitude }: Location) => {
@@ -57,7 +56,6 @@ export function MapComponent({ baseComponentId }: PropsFromGenericComponent<'Map
           markerLocation={markerLocation}
           setMarkerLocation={markerBinding ? setMarkerLocation : undefined}
           geometries={geometries}
-          userDefinedGeometries={userDefinedGeometries}
         />
       </div>
       <Paragraph

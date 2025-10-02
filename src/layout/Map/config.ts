@@ -25,12 +25,6 @@ export const Config = new CG.component({
           .optional()
           .setDescription('Should point to an array of objects like {data: string, label: string}'),
       ),
-      new CG.prop(
-        'userDefinedGeometries',
-        new CG.dataModelBinding()
-          .optional()
-          .setDescription('Should point to an array of objects like {data: string, label: string}'),
-      ),
     ).exportAs('IDataModelBindingsForMap'),
   )
   .addProperty(

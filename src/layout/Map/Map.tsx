@@ -21,6 +21,7 @@ import type L from 'leaflet';
 
 import { useIsPdf } from 'src/hooks/useIsPdf';
 import classes from 'src/layout/Map/MapComponent.module.css';
+import { useLeafletDrawSpritesheetFix } from 'src/layout/Map/useLeafletDrawSpritesheetFix';
 import {
   calculateBounds,
   DefaultBoundsPadding,
@@ -59,7 +60,6 @@ type MapProps = {
   markerLocation?: Location;
   setMarkerLocation?: (location: Location) => void;
   geometries?: RawGeometry[];
-  userDefinedGeometries?: RawGeometry[];
   isSummary?: boolean;
   className?: string;
 };
@@ -70,10 +70,10 @@ export function Map({
   markerLocation,
   setMarkerLocation,
   geometries: rawGeometries,
-  userDefinedGeometries: rawUserDefinedGeometries,
   className,
 }: MapProps) {
   const map = useRef<LeafletMap | null>(null);
+  const editRef = useRef<L.FeatureGroup>(null);
 
   const {
     readOnly,
@@ -83,6 +83,8 @@ export function Map({
     geometryType,
   } = useItemWhenType(baseComponentId, 'Map');
 
+  useLeafletDrawSpritesheetFix();
+
   const isPdf = useIsPdf();
   const isInteractive = !readOnly && !isSummary;
   const layers = customLayers ?? DefaultMapLayers;
@@ -90,8 +92,7 @@ export function Map({
 
   const geometries = useMemo(() => {
     try {
-      const geometries = parseGeometries(rawGeometries, geometryType);
-      return geometries;
+      return parseGeometries(rawGeometries, geometryType);
     } catch {
       throw new Error(
         `Failed to parse geometry data as ${geometryType}:\n- ${rawGeometries?.map((g) => JSON.stringify(g)).join('\n- ')}`,
@@ -116,8 +117,6 @@ export function Map({
       map.current?.fitBounds(bounds, { padding: DefaultBoundsPadding, animate: !isSummary });
     }
   }, [bounds, isSummary]);
-
-  const editRef = useRef<L.FeatureGroup>(null);
 
   /* const onShapeDrawn = (e) => {
     e.layer.on('click', () => {
@@ -151,14 +150,15 @@ export function Map({
     }
   }, [geojson]);
 
+ */
   const onShapeDrawn = () => {
     const geo = editRef.current?.toGeoJSON();
     console.log(geo);
-    if (geo?.type === 'FeatureCollection') {
-      setGeojson(geo);
-    }
+    // if (geo?.type === 'FeatureCollection') {
+    // setGeojson(geo);
+    // }
   };
- */
+
   return (
     <MapContainer
       ref={map}
@@ -184,14 +184,14 @@ export function Map({
         <EditControl
           // ref={editRef}
           position='topright'
-          // onCreated={onShapeDrawn}
+          onCreated={onShapeDrawn}
           draw={{
             marker: true,
-            polyline: false,
-            rectangle: false,
+            polyline: true,
+            rectangle: true,
             circlemarker: false,
-            circle: false,
-            polygon: false,
+            circle: true,
+            polygon: true,
           }}
         />
       </FeatureGroup>
