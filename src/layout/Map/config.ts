@@ -80,7 +80,7 @@ export const Config = new CG.component({
                 .setTitle('Maximum Zoom Level')
                 .setDescription('The maximum zoom level for the layer'),
             ),
-          ),
+          ).exportAs('MapTileLayer'),
           new CG.obj(
             new CG.prop('url', new CG.str().setTitle('Map layer url').setDescription('Url to a wms-type map server')),
             new CG.prop('attribution', new CG.str().optional()),
@@ -126,7 +126,7 @@ export const Config = new CG.component({
             ),
             new CG.prop('minZoom', new CG.num().optional({ default: 0 })),
             new CG.prop('maxZoom', new CG.num().optional({ default: 18 })),
-          ),
+          ).exportAs('MapWMSLayer'),
         )
           .setUnionType('discriminated')
           .exportAs('MapLayer'),

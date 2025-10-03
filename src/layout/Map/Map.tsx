@@ -1,168 +1,64 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import {
-  AttributionControl,
-  FeatureGroup,
-  GeoJSON,
-  MapContainer,
-  Marker,
-  TileLayer,
-  Tooltip,
-  useMapEvent,
-  WMSTileLayer,
-} from 'react-leaflet';
-import { EditControl } from 'react-leaflet-draw';
+import React, { useEffect, useRef } from 'react';
+import { AttributionControl, MapContainer } from 'react-leaflet';
 
 import cn from 'classnames';
-import { icon, type Map as LeafletMap, marker } from 'leaflet';
-import Icon from 'leaflet/dist/images/marker-icon.png';
-import RetinaIcon from 'leaflet/dist/images/marker-icon-2x.png';
-import IconShadow from 'leaflet/dist/images/marker-shadow.png';
-import type L from 'leaflet';
+import { type Map as LeafletMap } from 'leaflet';
 
 import { useIsPdf } from 'src/hooks/useIsPdf';
+import { MapEditGeometries } from 'src/layout/Map/features/editableGeometries/MapEditGeometries';
+import { useMapGeometryBounds } from 'src/layout/Map/features/fixedGeometries/hooks';
+import { MapGeometries } from 'src/layout/Map/features/fixedGeometries/MapGeometries';
+import { MapLayers } from 'src/layout/Map/features/layers/MapLayers';
+import { MapSingleMarker } from 'src/layout/Map/features/singleMarker/MapSingleMarker';
 import classes from 'src/layout/Map/MapComponent.module.css';
-import { useLeafletDrawSpritesheetFix } from 'src/layout/Map/useLeafletDrawSpritesheetFix';
-import {
-  calculateBounds,
-  DefaultBoundsPadding,
-  DefaultFlyToZoomLevel,
-  DefaultMapLayers,
-  getMapStartingView,
-  isLocationValid,
-  locationToTuple,
-  parseGeometries,
-} from 'src/layout/Map/utils';
-import { useItemWhenType } from 'src/utils/layout/useNodeItem';
+import { DefaultBoundsPadding, DefaultFlyToZoomLevel, getMapStartingView, isLocationValid } from 'src/layout/Map/utils';
+import { useExternalItem } from 'src/utils/layout/hooks';
 import type { Location } from 'src/layout/Map/config.generated';
-import type { RawGeometry } from 'src/layout/Map/types';
-
-const markerIcon = icon({
-  iconUrl: Icon,
-  iconRetinaUrl: RetinaIcon,
-  shadowUrl: IconShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
-function MapClickHandler({ onClick }: { onClick: (location: Location) => void }) {
-  useMapEvent('click', (event) => {
-    if (!event.originalEvent.defaultPrevented) {
-      const location = event.latlng.wrap();
-      onClick({ latitude: location.lat, longitude: location.lng });
-    }
-  });
-
-  return null;
-}
 
 type MapProps = {
   baseComponentId: string;
   markerLocation?: Location;
   setMarkerLocation?: (location: Location) => void;
-  geometries?: RawGeometry[];
-  isSummary?: boolean;
+  readOnly: boolean;
+  animate?: boolean;
   className?: string;
 };
 
 export function Map({
   baseComponentId,
-  isSummary,
   markerLocation,
   setMarkerLocation,
-  geometries: rawGeometries,
   className,
+  readOnly,
+  animate = true,
 }: MapProps) {
   const map = useRef<LeafletMap | null>(null);
-  const editRef = useRef<L.FeatureGroup>(null);
-
-  const {
-    readOnly,
-    layers: customLayers,
-    centerLocation: customCenterLocation,
-    zoom: customZoom,
-    geometryType,
-  } = useItemWhenType(baseComponentId, 'Map');
-
-  useLeafletDrawSpritesheetFix();
+  const { centerLocation: customCenterLocation, zoom: customZoom } = useExternalItem(baseComponentId, 'Map');
 
   const isPdf = useIsPdf();
-  const isInteractive = !readOnly && !isSummary;
-  const layers = customLayers ?? DefaultMapLayers;
   const markerLocationIsValid = isLocationValid(markerLocation);
 
-  const geometries = useMemo(() => {
-    try {
-      return parseGeometries(rawGeometries, geometryType);
-    } catch {
-      throw new Error(
-        `Failed to parse geometry data as ${geometryType}:\n- ${rawGeometries?.map((g) => JSON.stringify(g)).join('\n- ')}`,
-      );
-    }
-  }, [geometryType, rawGeometries]);
-
-  const geometryBounds = useMemo(() => calculateBounds(geometries), [geometries]);
-
+  const geometryBounds = useMapGeometryBounds(baseComponentId);
   const { center, zoom, bounds } = getMapStartingView(markerLocation, customCenterLocation, customZoom, geometryBounds);
 
   useEffect(() => {
     if (markerLocationIsValid) {
       map.current?.flyTo({ lat: markerLocation.latitude, lng: markerLocation.longitude }, DefaultFlyToZoomLevel, {
-        animate: !isSummary,
+        animate,
       });
     }
-  }, [isSummary, markerLocationIsValid, markerLocation]);
+  }, [animate, markerLocationIsValid, markerLocation]);
 
   useEffect(() => {
     if (bounds) {
-      map.current?.fitBounds(bounds, { padding: DefaultBoundsPadding, animate: !isSummary });
+      map.current?.fitBounds(bounds, { padding: DefaultBoundsPadding, animate });
     }
-  }, [bounds, isSummary]);
-
-  /* const onShapeDrawn = (e) => {
-    e.layer.on('click', () => {
-      //editRef.current.leafletElement._toolbars.edit._modes.edit.handler.enable();
-    });
-    e.layer.on('contextmenu', () => {
-      //do some contextmenu action here
-    });
-    e.layer.bindTooltip('Text', {
-      className: 'leaflet-draw-tooltip:before leaflet-draw-tooltip leaflet-draw-tooltip-visible',
-      sticky: true,
-      direction: 'right',
-    });
-  }; */
-
-  /* React.useEffect(() => {
-    if (editRef.current?.getLayers().length === 0 && geojson) {
-      L.geoJSON(geojson).eachLayer((layer) => {
-        if (
-          layer instanceof L.Marker
-        ) {
-          if (layer?.feature?.properties.radius && ref.current) {
-            new L.Circle(layer.feature.geometry.coordinates.slice().reverse(), {
-              radius: layer.feature?.properties.radius,
-            }).addTo(ref.current);
-          } else {
-            ref.current?.addLayer(layer);
-          }
-        }
-      });
-    }
-  }, [geojson]);
-
- */
-  const onShapeDrawn = () => {
-    const geo = editRef.current?.toGeoJSON();
-    console.log(geo);
-    // if (geo?.type === 'FeatureCollection') {
-    // setGeojson(geo);
-    // }
-  };
+  }, [bounds, animate]);
 
   return (
     <MapContainer
       ref={map}
-      className={cn(classes.map, { [classes.mapReadOnly]: !isInteractive, [classes.print]: isPdf }, className)}
+      className={cn(classes.map, { [classes.mapReadOnly]: readOnly, [classes.print]: isPdf }, className)}
       center={center}
       zoom={zoom}
       bounds={bounds}
@@ -172,96 +68,25 @@ export function Map({
         [-90, -200],
         [90, 200],
       ]}
-      fadeAnimation={isInteractive}
-      zoomControl={isInteractive}
-      dragging={isInteractive}
-      touchZoom={isInteractive}
-      doubleClickZoom={isInteractive}
-      scrollWheelZoom={isInteractive}
+      fadeAnimation={animate}
+      zoomControl={!readOnly}
+      dragging={!readOnly}
+      touchZoom={!readOnly}
+      doubleClickZoom={!readOnly}
+      scrollWheelZoom={!readOnly}
       attributionControl={false}
     >
-      <FeatureGroup ref={editRef}>
-        <EditControl
-          // ref={editRef}
-          position='topright'
-          onCreated={onShapeDrawn}
-          draw={{
-            marker: true,
-            polyline: true,
-            rectangle: true,
-            circlemarker: false,
-            circle: true,
-            polygon: true,
-          }}
-        />
-      </FeatureGroup>
-      {setMarkerLocation && isInteractive && <MapClickHandler onClick={setMarkerLocation} />}
-      {layers.map((layer, i) =>
-        layer.type === 'WMS' ? (
-          <WMSTileLayer
-            key={i}
-            url={layer.url}
-            attribution={layer.attribution}
-            subdomains={layer.subdomains ? layer.subdomains : []}
-            layers={layer.layers}
-            format={layer.format ?? 'image/jpeg'}
-            version={layer.version ?? '1.1.1'}
-            transparent={layer.transparent ?? false}
-            uppercase={layer.uppercase ?? false}
-            minZoom={layer.minZoom ?? 0}
-            maxZoom={layer.maxZoom ?? 18}
-          />
-        ) : (
-          <TileLayer
-            key={i}
-            url={layer.url}
-            attribution={layer.attribution}
-            subdomains={layer.subdomains ? layer.subdomains : []}
-            minZoom={layer.minZoom ?? 0}
-            maxZoom={layer.maxZoom ?? 18}
-          />
-        ),
-      )}
-      {geometries?.map(({ altinnRowId, data, label }) => (
-        <GeoJSON
-          key={altinnRowId}
-          data={data}
-          interactive={false}
-          pointToLayer={(_, position) =>
-            marker(position, { icon: markerIcon, interactive: false, draggable: false, keyboard: false })
-          }
-        >
-          {label && (
-            <Tooltip
-              permanent={true}
-              content={label}
-              interactive={isInteractive}
-              direction={data.type == 'Point' ? 'bottom' : 'top'}
-              eventHandlers={{ click: (e) => e.originalEvent.preventDefault() }}
-            />
-          )}
-        </GeoJSON>
-      ))}
-      {markerLocationIsValid ? (
-        <Marker
-          position={locationToTuple(markerLocation)}
-          icon={markerIcon}
-          eventHandlers={
-            isInteractive && setMarkerLocation
-              ? {
-                  click: () => {},
-                  dragend: (e) => {
-                    const { lat, lng } = e.target._latlng;
-                    setMarkerLocation({ latitude: lat, longitude: lng });
-                  },
-                }
-              : undefined
-          }
-          interactive={isInteractive}
-          draggable={isInteractive}
-          keyboard={isInteractive}
-        />
-      ) : null}
+      <MapEditGeometries />
+      <MapLayers baseComponentId={baseComponentId} />
+      <MapGeometries
+        baseComponentId={baseComponentId}
+        readOnly={readOnly}
+      />
+      <MapSingleMarker
+        markerLocation={markerLocation}
+        setMarkerLocation={setMarkerLocation}
+        readOnly={readOnly}
+      />
       <AttributionControl prefix={false} />
     </MapContainer>
   );
