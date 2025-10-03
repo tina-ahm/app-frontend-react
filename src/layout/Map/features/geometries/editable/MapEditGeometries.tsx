@@ -4,7 +4,7 @@ import { EditControl } from 'react-leaflet-draw';
 
 import type L from 'leaflet';
 
-import { useLeafletDrawSpritesheetFix } from 'src/layout/Map/features/editableGeometries/useLeafletDrawSpritesheetFix';
+import { useLeafletDrawSpritesheetFix } from 'src/layout/Map/features/geometries/editable/useLeafletDrawSpritesheetFix';
 
 export function MapEditGeometries() {
   const editRef = useRef<L.FeatureGroup>(null);

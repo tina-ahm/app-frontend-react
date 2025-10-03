@@ -6,7 +6,7 @@ import Icon from 'leaflet/dist/images/marker-icon.png';
 import RetinaIcon from 'leaflet/dist/images/marker-icon-2x.png';
 import IconShadow from 'leaflet/dist/images/marker-shadow.png';
 
-import { useMapParsedGeometries } from 'src/layout/Map/features/fixedGeometries/hooks';
+import { useMapParsedGeometries } from 'src/layout/Map/features/geometries/fixed/hooks';
 
 const markerIcon = icon({
   iconUrl: Icon,

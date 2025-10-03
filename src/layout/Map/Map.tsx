@@ -6,9 +6,9 @@ import cn from 'classnames';
 import { type Map as LeafletMap } from 'leaflet';
 
 import { useIsPdf } from 'src/hooks/useIsPdf';
-import { MapEditGeometries } from 'src/layout/Map/features/editableGeometries/MapEditGeometries';
-import { useMapGeometryBounds } from 'src/layout/Map/features/fixedGeometries/hooks';
-import { MapGeometries } from 'src/layout/Map/features/fixedGeometries/MapGeometries';
+import { MapEditGeometries } from 'src/layout/Map/features/geometries/editable/MapEditGeometries';
+import { useMapGeometryBounds } from 'src/layout/Map/features/geometries/fixed/hooks';
+import { MapGeometries } from 'src/layout/Map/features/geometries/fixed/MapGeometries';
 import { MapLayers } from 'src/layout/Map/features/layers/MapLayers';
 import { useSingleMarker } from 'src/layout/Map/features/singleMarker/hooks';
 import { MapSingleMarker } from 'src/layout/Map/features/singleMarker/MapSingleMarker';
