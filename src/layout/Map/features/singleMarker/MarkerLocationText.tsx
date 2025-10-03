@@ -3,11 +3,13 @@ import React from 'react';
 import { Paragraph } from '@digdir/designsystemet-react';
 
 import { Lang } from 'src/features/language/Lang';
+import { useSingleMarker } from 'src/layout/Map/features/singleMarker/hooks';
 import classes from 'src/layout/Map/MapComponent.module.css';
 import { isLocationValid } from 'src/layout/Map/utils';
-import type { Location } from 'src/layout/Map/config.generated';
 
-export function MarkerLocationText({ location }: { location: Location | undefined }) {
+export function MarkerLocationText({ baseComponentId }: { baseComponentId: string }) {
+  const location = useSingleMarker(baseComponentId);
+
   return (
     <Paragraph
       data-size='sm'

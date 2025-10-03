@@ -74,8 +74,8 @@ export function MapSummary({ targetBaseComponentId }: Summary2Props) {
         </div>
         <Map
           baseComponentId={targetBaseComponentId}
-          markerLocation={markerLocation}
-          isSummary={true}
+          readOnly={true}
+          animate={false}
         />
         {markerLocation && (
           <Paragraph className={cn(classes.footer, classes.summaryValue, { [classes.error]: errors.length > 0 })}>

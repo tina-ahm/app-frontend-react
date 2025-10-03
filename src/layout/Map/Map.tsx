@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { AttributionControl, MapContainer } from 'react-leaflet';
+import type { RefObject } from 'react';
 
 import cn from 'classnames';
 import { type Map as LeafletMap } from 'leaflet';
@@ -9,51 +10,23 @@ import { MapEditGeometries } from 'src/layout/Map/features/editableGeometries/Ma
 import { useMapGeometryBounds } from 'src/layout/Map/features/fixedGeometries/hooks';
 import { MapGeometries } from 'src/layout/Map/features/fixedGeometries/MapGeometries';
 import { MapLayers } from 'src/layout/Map/features/layers/MapLayers';
+import { useSingleMarker } from 'src/layout/Map/features/singleMarker/hooks';
 import { MapSingleMarker } from 'src/layout/Map/features/singleMarker/MapSingleMarker';
 import classes from 'src/layout/Map/MapComponent.module.css';
 import { DefaultBoundsPadding, DefaultFlyToZoomLevel, getMapStartingView, isLocationValid } from 'src/layout/Map/utils';
 import { useExternalItem } from 'src/utils/layout/hooks';
-import type { Location } from 'src/layout/Map/config.generated';
 
 type MapProps = {
   baseComponentId: string;
-  markerLocation?: Location;
-  setMarkerLocation?: (location: Location) => void;
   readOnly: boolean;
   animate?: boolean;
   className?: string;
 };
 
-export function Map({
-  baseComponentId,
-  markerLocation,
-  setMarkerLocation,
-  className,
-  readOnly,
-  animate = true,
-}: MapProps) {
+export function Map({ baseComponentId, className, readOnly, animate = true }: MapProps) {
   const map = useRef<LeafletMap | null>(null);
-  const { centerLocation: customCenterLocation, zoom: customZoom } = useExternalItem(baseComponentId, 'Map');
-
   const isPdf = useIsPdf();
-  const markerLocationIsValid = isLocationValid(markerLocation);
-
-  const geometryBounds = useMapGeometryBounds(baseComponentId);
-  const { center, zoom, bounds } = getMapStartingView(markerLocation, customCenterLocation, customZoom, geometryBounds);
-
-  useEffect(() => {
-    if (markerLocationIsValid) {
-      map.current?.flyTo({ lat: markerLocation.latitude, lng: markerLocation.longitude }, DefaultFlyToZoomLevel, {
-        animate,
-      });
-    }
-  }, [animate, markerLocationIsValid, markerLocation]);
-
-  useEffect(() => {
-    if (bounds) {
-      map.current?.fitBounds(bounds, { padding: DefaultBoundsPadding, animate });
-    }
-  }, [bounds, animate]);
+  const { center, zoom, bounds } = useAutoViewport(baseComponentId, map, animate);
 
   return (
     <MapContainer
@@ -83,11 +56,33 @@ export function Map({
         readOnly={readOnly}
       />
       <MapSingleMarker
-        markerLocation={markerLocation}
-        setMarkerLocation={setMarkerLocation}
+        baseComponentId={baseComponentId}
         readOnly={readOnly}
       />
       <AttributionControl prefix={false} />
     </MapContainer>
   );
+}
+
+function useAutoViewport(baseComponentId: string, map: RefObject<LeafletMap | null>, animate: boolean) {
+  const markerLocation = useSingleMarker(baseComponentId);
+  const { centerLocation: customCenterLocation, zoom: customZoom } = useExternalItem(baseComponentId, 'Map');
+  const geometryBounds = useMapGeometryBounds(baseComponentId);
+  const { center, zoom, bounds } = getMapStartingView(markerLocation, customCenterLocation, customZoom, geometryBounds);
+
+  useEffect(() => {
+    if (isLocationValid(markerLocation)) {
+      map.current?.flyTo({ lat: markerLocation.latitude, lng: markerLocation.longitude }, DefaultFlyToZoomLevel, {
+        animate,
+      });
+    }
+  }, [animate, markerLocation, map]);
+
+  useEffect(() => {
+    if (bounds) {
+      map.current?.fitBounds(bounds, { padding: DefaultBoundsPadding, animate });
+    }
+  }, [animate, bounds, map]);
+
+  return { center, zoom, bounds };
 }
